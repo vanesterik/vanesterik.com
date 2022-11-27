@@ -1,0 +1,8 @@
+{
+  "menu": [
+    ["/", "van_esterik"],
+    ["/about", "about"],
+    ["/work", "work"],
+    ["/blog", "blog"]
+  ]
+}
