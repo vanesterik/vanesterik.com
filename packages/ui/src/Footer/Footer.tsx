@@ -1,7 +1,7 @@
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from 'next-i18next'
 
 export const Footer = () => {
-  const { t } = useTranslation('footer')
+  const { t } = useTranslation()
 
   return (
     <footer className="grid grid-cols-[3.5rem_auto] gap-8 pb-3 pt-24 z-10">
@@ -27,7 +27,7 @@ const Prompt = () => (
 )
 
 const FooterMenu = ({ name }: { name: string }) => {
-  const { t } = useTranslation('footer')
+  const { t } = useTranslation()
   const menu = t(name, { returnObjects: true })
 
   if (typeof menu === 'string') return null

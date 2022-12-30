@@ -12,7 +12,7 @@ export const Header = () => {
 }
 
 const HeaderMenu = () => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation()
   const menu = t('menu', { returnObjects: true })
 
   if (typeof menu === 'string') return null

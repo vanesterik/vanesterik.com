@@ -1,25 +1,36 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useRef } from 'react'
-import { black, stone } from 'tailwindcss/colors'
+import clsx from 'clsx'
+import { useTranslation } from 'next-i18next'
+import { Fragment, useRef } from 'react'
+import { black, stone, white } from 'tailwindcss/colors'
 import { MathUtils, PlaneGeometry } from 'three'
 
-export const Cover = () => (
-  <div className="absolute bottom-0 left-0 right-0 top-0">
-    <Canvas linear>
-      <Camera />
-      <Plane />
-    </Canvas>
-  </div>
+export type CoverProps = {
+  theme?: 'dark' | 'light'
+}
+
+export const Cover = ({ theme }: CoverProps) => (
+  <>
+    <div className="absolute bottom-0 left-0 right-0 top-0">
+      <Canvas linear>
+        <Camera theme={theme} />
+        <Plane />
+      </Canvas>
+    </div>
+    <div className="relative z-10">
+      <Tagline />
+    </div>
+  </>
 )
 
-export const Camera = () => {
+export const Camera = ({ theme = 'light' }: CoverProps) => {
   useThree(({ camera }) => {
     camera.rotation.set(MathUtils.degToRad(60), 0, 0)
   })
 
   return (
     <>
-      <fog attach="fog" args={[black, 0, 40]} />
+      <fog attach="fog" args={[theme === 'dark' ? black : white, 0, 40]} />
       <ambientLight />
     </>
   )
@@ -55,5 +66,31 @@ export const Plane = () => {
       />
       <meshStandardMaterial color={stone[400]} wireframe />
     </mesh>
+  )
+}
+
+export const Tagline = () => {
+  const { t } = useTranslation()
+  const tagline = t('tagline', { returnObjects: true })
+
+  if (typeof tagline === 'string') return null
+
+  return (
+    <h1 className="font-bold leading-none text-6xl text-sans sm:text-7xl md:text-8xl lg:text-[116px] lg:px-20">
+      {Object.values(tagline).map((part, index, array) => (
+        <Fragment key={part}>
+          <span
+            className={clsx(
+              index === array.length - 1
+                ? 'text-stone-700 dark:text-white'
+                : 'text-stone-300 dark:text-stone-600',
+            )}
+          >
+            {part}
+          </span>
+          <br />
+        </Fragment>
+      ))}
+    </h1>
   )
 }

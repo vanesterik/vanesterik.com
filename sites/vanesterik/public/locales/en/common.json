@@ -1,8 +1,20 @@
 {
+  "contact": [["mailto:koen@vanesterik.com", "koen@vanesterik.com"]],
+  "copyright": "Koen Dirk van Esterik B.V. All rights reserved",
   "menu": [
     ["/", "van_esterik"],
     ["/about", "about"],
-    ["/work", "work"],
-    ["/blog", "blog"]
+    ["/projects", "projects"],
+    ["/posts", "posts"]
+  ],
+  "social": [
+    ["https://github.com/koendirkvanesterik", "github"],
+    ["https://www.linkedin.com/in/kdesterik/", "linkedin"]
+  ],
+  "tagline": [
+    "Live to learn.",
+    "Learn to code.",
+    "Code to build.",
+    "Build to live."
   ]
 }
