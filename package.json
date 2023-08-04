@@ -1,12 +1,13 @@
 {
   "name": "vanesterik",
   "version": "1.0.0",
-  "license": "ISC",
-  "packageManager": "pnpm@7.13.5",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "packageManager": "pnpm@8.2.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "devDependencies": {
-    "typescript": "4.9.3"
+    "prettier-config": "github:vanesterik/prettier-config",
+    "typescript": "5.0.4"
   }
 }

@@ -1,6 +1,5 @@
-export default {
+module.exports = {
   define: {
     'process.env': process.env,
   },
-  publicDir: '../../sites/vanesterik/public',
 }

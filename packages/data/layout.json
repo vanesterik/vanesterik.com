@@ -1,0 +1,57 @@
+{
+  "copyright": "Koen Dirk van Esterik B.V. All rights reserved",
+  "contact": [
+    {
+      "name": "koen@vanesterik.com",
+      "url": "mailto:koen@vanesterik.com"
+    }
+  ],
+  "menu": [
+    {
+      "name": "van_esterik",
+      "url": "/"
+    },
+    {
+      "name": "about",
+      "url": "/about"
+    },
+    {
+      "name": "projects",
+      "url": "/projects"
+    },
+    {
+      "name": "posts",
+      "url": "/posts"
+    }
+  ],
+  "social": [
+    {
+      "name": "github",
+      "url": "https://github.com/vanesterik"
+    },
+    {
+      "name": "linkedin",
+      "url": "https://www.linkedin.com/in/kdesterik/"
+    }
+  ],
+  "tagline": [
+    "Live to learn.",
+    "Learn to code.",
+    "Code to build.",
+    "Build to live."
+  ],
+  "theme": [
+    {
+      "name": "system",
+      "icon": "snowflake"
+    },
+    {
+      "name": "dark",
+      "icon": "moon"
+    },
+    {
+      "name": "light",
+      "icon": "sun"
+    }
+  ]
+}
