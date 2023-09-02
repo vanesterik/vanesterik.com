@@ -1,4 +1,5 @@
 {
   "extends": "@vanesterik/config/tsconfig/react.json",
-  "include": ["./lib", "./stories", "./index.ts"]
+  "include": ["./lib", "./stories", "./index.ts"],
+  "exclude": ["node_modules"]
 }

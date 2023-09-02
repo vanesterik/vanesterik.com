@@ -1,4 +1,4 @@
-import { button, stack, text } from '@vanesterik/ui'
+import { button, stack } from '@vanesterik/ui'
 import Link from 'next/link'
 
 type NavigationItem = {

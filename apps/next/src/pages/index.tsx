@@ -1,5 +1,5 @@
 import { game } from '@vanesterik/ui'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 import { useTheme } from '../components'
 
