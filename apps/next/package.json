@@ -6,6 +6,7 @@
     "@headlessui/react": "^1.7.16",
     "@vanesterik/data": "workspace:*",
     "@vanesterik/ui": "workspace:*",
+    "@vanesterik/utils": "workspace:*",
     "next": "^13.0.2",
     "next-transpile-modules": "^10.0.1",
     "react": "^18.2.0",

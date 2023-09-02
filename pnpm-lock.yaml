@@ -22,6 +22,9 @@ importers:
       '@vanesterik/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@vanesterik/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       next:
         specifier: ^13.0.2
         version: 13.0.4(react-dom@18.2.0)(react@18.2.0)
