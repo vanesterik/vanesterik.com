@@ -1,4 +1,4 @@
 {
   "extends": "@vanesterik/config/tsconfig/react.json",
-  "include": ["helpers", "hooks"]
+  "include": ["./helpers", "./index.ts"]
 }
