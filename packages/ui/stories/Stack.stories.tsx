@@ -1,4 +1,3 @@
-/* eslint-disable fp/no-mutation */
 import type { Story } from '@ladle/react'
 import { VariantProps } from 'class-variance-authority'
 import clsx from 'clsx'

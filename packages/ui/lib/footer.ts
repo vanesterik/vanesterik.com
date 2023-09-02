@@ -5,6 +5,6 @@ export const footer = cva([
   'grid-cols-[3.5rem_auto]',
   'gap-8',
   'pb-3',
-  'pt-24',
+  'pt-12',
   'z-10',
 ])
