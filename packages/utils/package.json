@@ -7,14 +7,11 @@
   },
   "devDependencies": {
     "@testing-library/react": "14.0.0",
-    "@types/jest": "29.5.1",
-    "@types/react": "18.2.6",
+    "@types/react": "18.2.21",
     "@vanesterik/config": "workspace:*",
-    "eslint": "^8.40.0",
+    "eslint": "^8.48.0",
     "eslint-config-custom": "github:vanesterik/eslint-config-custom",
-    "jest": "29.5.0",
-    "ts-jest": "29.1.0",
-    "typescript": "5.0.4"
+    "typescript": "5.2.2"
   },
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",
