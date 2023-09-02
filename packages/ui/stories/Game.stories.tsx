@@ -3,16 +3,18 @@ import { useEffect, useRef } from 'react'
 
 import { game } from '../lib/game'
 
+const GAME_CONTAINER_ID = 'game-container'
+
 export const Component = () => {
-  const ref = useRef<HTMLDivElement>(null)
   const {
     globalState: { theme },
   } = useLadleContext()
 
   useEffect(() => {
-    if (ref.current)
-      game(ref.current, theme === ThemeState.Dark ? 'dark' : 'light')
+    const finalize = game(GAME_CONTAINER_ID, theme === ThemeState.Dark)
+
+    return () => finalize()
   }, [theme])
 
-  return <div className="h-full w-full" ref={ref} />
+  return <div className="relative h-full w-full" id={GAME_CONTAINER_ID} />
 }

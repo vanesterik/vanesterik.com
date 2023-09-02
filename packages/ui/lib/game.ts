@@ -3,21 +3,27 @@ import { random } from '@vanesterik/utils'
 // Types ///////////////////////////////////////////////////////////////////////
 
 enum ActionTypes {
-  INITIALIZE,
   CREATE_PARTICLES,
-  UPDATE_PARTICLE_POSITION,
+  SET_FRAME_ID,
+  SET_INITIAL_STATE,
   UPDATE_PARTICLE_COLLISION,
   UPDATE_PARTICLE_HORIZONTAL_BOUNDARY,
+  UPDATE_PARTICLE_POSITION,
   UPDATE_PARTICLE_VERTICAL_BOUNDARY,
-}
-
-type InitializeAction = {
-  type: ActionTypes.INITIALIZE
 }
 
 type CreateParticlesAction = {
   type: ActionTypes.CREATE_PARTICLES
   payload: Record<number, Particle>
+}
+
+type SetFrameIdAction = {
+  type: ActionTypes.SET_FRAME_ID
+  payload: number
+}
+
+type SetInitialStateAction = {
+  type: ActionTypes.SET_INITIAL_STATE
 }
 
 type UpdateParticlePositionAction = {
@@ -41,11 +47,12 @@ type UpdateParticleVerticalBoundaryAction = {
 }
 
 type Action =
-  | InitializeAction
   | CreateParticlesAction
-  | UpdateParticlePositionAction
+  | SetFrameIdAction
+  | SetInitialStateAction
   | UpdateParticleCollisionAction
   | UpdateParticleHorizontalBoundaryAction
+  | UpdateParticlePositionAction
   | UpdateParticleVerticalBoundaryAction
 
 type Listener = (state: State, previousState: State) => void
@@ -53,14 +60,16 @@ type Listener = (state: State, previousState: State) => void
 type Reducer = (state: State, action: Action) => State
 
 type State = {
-  particles: Record<number, Particle>
   isDarkMode: boolean
+  particles: Record<number, Particle>
+  frameId: number
 }
 
 type Store = {
   dispatch: (action: Action) => void
   getIsDarkMode: () => boolean
   getParticles: () => Particle[]
+  getFrameId: () => number
   subscribe: (listener: Listener) => () => void
 }
 
@@ -85,17 +94,51 @@ const GAME_ID = 'game'
 
 /**
  * Main game function which creates a canvas element and appends it to the
- * passed container element. It sets the stage for the game by creating the
+ * passed container id. It sets the stage for the game by creating the
  * initial state and starting the render loop.
  */
-export const game = (container: HTMLElement, isDarkMode = false) => {
-  const reducer = createReducer({ particles: {}, isDarkMode })
+export const game = (containerId: string, isDarkMode = false) => {
+  const container = document.getElementById(containerId)
+
+  if (!container)
+    return () => {
+      throw new Error('Container not found')
+    }
+
+  const reducer = createReducer({ frameId: 0, isDarkMode, particles: {} })
   const store = createStore(reducer)
+  store.dispatch({ type: ActionTypes.SET_INITIAL_STATE })
 
   createCanvas(container)
   resizeCanvas(store)
-  initializeCanvas(store)
+  initialize(store)
+
+  // Directly return finalize function in order to finalize the game
+  return () => finalize(store)
 }
+
+/**
+ * Initialize game by starting render loop
+ */
+const initialize = (store: Store) => {
+  const { dispatch, subscribe } = store
+  const unsubscribe = subscribe((state) => {
+    if (!state) return
+    // Directly unsubscribe from state changes, because this function should
+    // only be called once
+    unsubscribe()
+    // Start render loop by requesting animation frame
+    const requestId = requestAnimationFrame(() => render(store))
+    // Dispatch returned request id to state in order to cancel requested
+    // animation frame when finalizing the game
+    dispatch({ type: ActionTypes.SET_FRAME_ID, payload: requestId })
+  })
+}
+
+/**
+ * Finalize game by stopping render loop
+ */
+const finalize = ({ getFrameId }: Store) => cancelAnimationFrame(getFrameId())
 
 /**
  * Create state container store based on passed reducer. The store is an object
@@ -118,6 +161,7 @@ const createStore = (reducer: Reducer) => {
 
   const getIsDarkMode = () => state.isDarkMode
   const getParticles = () => Object.values(state.particles)
+  const getFrameId = () => state.frameId
 
   const subscribe = (listener: Listener) => {
     listeners.add(listener)
@@ -129,6 +173,7 @@ const createStore = (reducer: Reducer) => {
     dispatch,
     getIsDarkMode,
     getParticles,
+    getFrameId,
     subscribe,
   }
 }
@@ -140,10 +185,15 @@ const createStore = (reducer: Reducer) => {
  */
 const createReducer =
   (initialState: State) =>
-  (state: State = initialState, action: Action) => {
+  (state: State = initialState, action: Action): State => {
     switch (action.type) {
-      case ActionTypes.INITIALIZE:
+      case ActionTypes.SET_INITIAL_STATE:
         return state
+      case ActionTypes.SET_FRAME_ID:
+        return {
+          ...state,
+          frameId: action.payload,
+        }
       case ActionTypes.CREATE_PARTICLES:
         return {
           ...state,
@@ -192,7 +242,6 @@ const createCanvas = (container: HTMLElement) => {
  * Update particles in state based on aforementioned dimensions.
  */
 const resizeCanvas = (store: Store) => {
-  const { dispatch } = store
   const canvas = getCanvas()
 
   const observer = new ResizeObserver((entries) => {
@@ -200,10 +249,10 @@ const resizeCanvas = (store: Store) => {
       if (entry.target.id === GAME_ID) {
         const width = entry.contentRect.width
         const height = entry.contentRect.height
+
         canvas.setAttribute('width', `${width}`)
         canvas.setAttribute('height', `${height}`)
-        // We need to dispatch initialize action to define initial state
-        dispatch({ type: ActionTypes.INITIALIZE })
+
         createParticles(store, width, height)
       }
     })
@@ -250,27 +299,14 @@ const createParticles = (
 }
 
 /**
- * Initialize canvas by starting render loop
- */
-const initializeCanvas = (store: Store) => {
-  const { subscribe } = store
-  const unsubscribe = subscribe((state) => {
-    if (!state) return
-    // Directly unsubscribe from state changes, because this function should
-    // only be called once
-    unsubscribe()
-
-    requestAnimationFrame(() => render(store))
-  })
-}
-
-/**
  * Render function which is called recursively by requestAnimationFrame, which
  * calls all functions that should be executed on every frame - ie. particle
  * position updates, collision detection, etc. You could see this as the game
  * engine.
  */
 const render = (store: Store) => {
+  const { dispatch } = store
+
   updateParticlePositions(store)
   detectParticleBoundaries(store)
   detectParticleCollisions(store)
@@ -278,7 +314,11 @@ const render = (store: Store) => {
   clearCanvas()
   drawParticles(store)
 
-  requestAnimationFrame(() => render(store))
+  // Call render function recursively by requesting animation frame again
+  const requestId = requestAnimationFrame(() => render(store))
+  // Dispatch returned request id to state in order to cancel requested
+  // animation frame when finalizing the game
+  dispatch({ type: ActionTypes.SET_FRAME_ID, payload: requestId })
 }
 
 /**
