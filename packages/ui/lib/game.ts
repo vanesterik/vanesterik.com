@@ -102,7 +102,7 @@ export const game = (containerId: string, isDarkMode = false) => {
 
   if (!container)
     return () => {
-      throw new Error('Container not found')
+      console.error('Container not found')
     }
 
   const reducer = createReducer({ frameId: 0, isDarkMode, particles: {} })
