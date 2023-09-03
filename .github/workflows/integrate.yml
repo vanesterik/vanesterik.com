@@ -1,0 +1,32 @@
+name: Intergrate
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    name: Lint / Typecheck / Test / Build
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.4.0
+        with:
+          run_install: false
+      - uses: actions/setup-node@v3.8.1
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Test
+        run: pnpm test
+      - name: Build
+        run: pnpm build

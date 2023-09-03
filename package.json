@@ -7,7 +7,18 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@commitlint/config-conventional": "^17.7.0",
+    "commitlint": "^17.7.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
     "prettier-config": "github:vanesterik/prettier-config",
     "typescript": "5.2.2"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "prepare": "husky install",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck"
   }
 }
