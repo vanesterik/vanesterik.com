@@ -4,7 +4,7 @@ module.exports = {
   '**/*.md': ['prettier --write'],
   '**/!(.ladle)/*.ts{,x}': [
     'eslint --fix --max-warnings 0',
-    'prettier --config ./.prettierrc.js --write',
+    'prettier --write',
   ],
   '**/*.y{,a}ml': ['prettier --write'],
 }
