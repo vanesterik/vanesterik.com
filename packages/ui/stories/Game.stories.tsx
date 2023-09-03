@@ -1,5 +1,5 @@
 import { ThemeState, useLadleContext } from '@ladle/react'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 import { game } from '../lib/game'
 
