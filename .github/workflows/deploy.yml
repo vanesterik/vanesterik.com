@@ -3,20 +3,37 @@ name: Deploy
 on: workflow_dispatch
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    name: Build
+    name: Build / Deploy
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.4.0
-        with:
-          run_install: false
-      - uses: actions/setup-node@v3.8.1
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3.8.1
         with:
           node-version: '18'
-          cache: pnpm
-      - name: Install
+          cache: 'pnpm'
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2.4.0
+        with:
+          run_install: false
+
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build
+
+      - name: Build application
         run: pnpm --filter next build
+
+      - name: Configure credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Deploy application
+        run: aws s3 sync ./apps/next/out s3://${{ secrets.AWS_S3_BUCKET_NAME }} --delete

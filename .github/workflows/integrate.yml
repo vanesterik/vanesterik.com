@@ -12,21 +12,31 @@ jobs:
     name: Lint / Typecheck / Test / Build
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2.4.0
-        with:
-          run_install: false
-      - uses: actions/setup-node@v3.8.1
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3.8.1
         with:
           node-version: '18'
           cache: 'pnpm'
-      - name: Install
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2.4.0
+        with:
+          run_install: false
+
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Lint
+
+      - name: Run linters
         run: pnpm lint
-      - name: Typecheck
+
+      - name: Run typecheck
         run: pnpm typecheck
-      - name: Test
+
+      - name: Run unit tests
         run: pnpm test
-      - name: Build
+
+      - name: Build application
         run: pnpm build

@@ -6,5 +6,6 @@ const withTM = require('next-transpile-modules')([
 
 /** @type {import('next').NextConfig} */
 module.exports = withTM({
+  output: 'export',
   reactStrictMode: true,
 })
