@@ -1,11 +1,11 @@
-name: Deploy
+name: Continuous Delivery
 
 on: workflow_dispatch
 
 jobs:
-  deploy:
+  delivery:
     runs-on: ubuntu-latest
-    name: Build / Deploy
+    name: Build & Deploy
 
     steps:
       - name: Checkout code

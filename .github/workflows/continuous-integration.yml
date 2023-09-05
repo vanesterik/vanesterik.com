@@ -1,4 +1,4 @@
-name: Intergrate
+name: Continuous Integration
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  integrate:
+  integration:
     runs-on: ubuntu-latest
-    name: Lint / Typecheck / Test / Build
+    name: Lint, Typecheck, Test & Build
 
     steps:
       - name: Checkout code
