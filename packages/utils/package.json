@@ -15,7 +15,7 @@
   },
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx",
-    "test": "echo \"Warn: no tests specified\"",
+    "test": "vitest",
     "typecheck": "tsc --noEmit"
   }
 }

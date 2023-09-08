@@ -5,5 +5,5 @@
     "declarationMap": false
   },
   "exclude": ["node_modules"],
-  "include": ["src", "next-env.d.ts"]
+  "include": ["src", "next-env.d.ts", "vitest.config.ts", "vitest.setup.ts"]
 }

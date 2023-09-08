@@ -6,26 +6,29 @@ type LinkListItem = {
 }
 
 type LinkListProps = {
-  items: LinkListItem[]
+  items?: LinkListItem[]
 }
 
-export const LinkList = ({ items }: LinkListProps) => (
-  <ul className={menu()}>
-    {items.map(({ name, url }) => {
-      const isMailLink = /mailto:/.test(url)
+export const LinkList = ({ items }: LinkListProps) => {
+  if (!items?.length) return null
 
-      return (
+  return (
+    <ul className={menu()}>
+      {items.map(({ name, url }) => (
         <li key={name}>
           <a
             className={text({ intent: 'link' })}
             href={url}
-            rel={isMailLink ? undefined : 'noopener noreferrer'}
-            target={isMailLink ? '_self' : '_blank'}
+            {...(isAlternativeLink(url)
+              ? { target: '_self' }
+              : { rel: 'noopener noreferrer', target: '_blank' })}
           >
             {name}
           </a>
         </li>
-      )
-    })}
-  </ul>
-)
+      ))}
+    </ul>
+  )
+}
+
+export const isAlternativeLink = (url: string) => /mailto:|tel:/.test(url)
