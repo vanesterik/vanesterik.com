@@ -27,6 +27,9 @@ tsconfig.tsbuildinfo
 .env.test.local
 .env.production.local
 
+# tests
+coverage
+
 # turbo
 .turbo
 .vercel

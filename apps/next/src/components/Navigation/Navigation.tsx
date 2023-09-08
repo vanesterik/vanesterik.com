@@ -7,22 +7,28 @@ type NavigationItem = {
 }
 
 type NavigationProps = {
-  items: NavigationItem[]
+  items?: NavigationItem[]
 }
 
-export const Navigation = ({ items }: NavigationProps) => (
-  <nav>
-    <ul className={stack({ direction: 'row' })}>
-      {items.map(({ name, url }) => (
-        <li key={name}>
-          <Link
-            className={button({ intent: url === '/' ? 'ghost' : 'secondary' })}
-            href={url}
-          >
-            {name}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  </nav>
-)
+export const Navigation = ({ items }: NavigationProps) => {
+  if (!items?.length) return null
+
+  return (
+    <nav>
+      <ul className={stack({ direction: 'row' })}>
+        {items.map(({ name, url }) => (
+          <li key={name}>
+            <Link
+              className={button({
+                intent: url === '/' ? 'ghost' : 'secondary',
+              })}
+              href={url}
+            >
+              {name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
