@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4.0.1
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -41,26 +41,65 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
+      - name: Create S3 bucket for PR
+        run: |
+          BUCKET_NAME="preview-pr-${{ github.event.number }}-${{ github.repository_owner }}"
+          echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
+          aws s3 mb s3://$BUCKET_NAME
+          aws s3 website s3://$BUCKET_NAME --index-document index.html --error-document 404.html
+
       - name: Deploy to S3
         run: |
-          aws s3 sync ./apps/next/out s3://${{ secrets.AWS_S3_BUCKET_NAME }}/pr-${{ github.event.number }} --delete
+          aws s3 sync ./apps/next/out s3://$BUCKET_NAME --delete
 
-      - name: Comment PR with preview URL
+      - name: Update PR with preview URL
         uses: actions/github-script@v7
         with:
           script: |
             const prNumber = context.payload.number;
-            const bucketName = '${{ secrets.AWS_S3_BUCKET_NAME }}';
+            const repoOwner = context.repo.owner;
+            const bucketName = `preview-pr-${prNumber}-${repoOwner}`;
             const region = '${{ secrets.AWS_DEFAULT_REGION }}';
 
-            // Construct the S3 website URL (adjust based on your S3 setup)
-            const previewUrl = `https://${bucketName}.s3-website-${region}.amazonaws.com/pr-${prNumber}`;
+            // Construct the S3 website URL
+            const previewUrl = `http://${bucketName}.s3-website-${region}.amazonaws.com`;
 
-            github.rest.issues.createComment({
+            // Get current PR details
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            // Add preview link to PR body
+            const previewSection = `\n\n---\n\n🚀 **Preview Environment**\n\n📍 **Preview URL:** ${previewUrl}\n\n_This preview will be automatically cleaned up when the PR is closed._`;
+
+            const existingBody = pr.body || '';
+            const previewSectionRegex = /\n\n---\n\n🚀 \*\*Preview Environment\*\*[\s\S]*?_This preview will be automatically cleaned up when the PR is closed\._/;
+
+            let updatedBody;
+            if (previewSectionRegex.test(existingBody)) {
+              // Replace existing preview section
+              updatedBody = existingBody.replace(previewSectionRegex, previewSection);
+            } else {
+              // Add new preview section
+              updatedBody = existingBody + previewSection;
+            }
+
+            // Update PR description
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              body: updatedBody
+            });
+
+            // Also add a comment for immediate notification
+            await github.rest.issues.createComment({
               issue_number: prNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `🚀 **Preview Environment Deployed**\n\n📍 Preview URL: ${previewUrl}\n\n_This preview will be automatically cleaned up when the PR is closed._`
+              body: `🚀 **Preview Environment Deployed**\n\n📍 Preview URL: ${previewUrl}\n\nThe preview link has also been added to the PR description.`
             });
 
   cleanup-preview:
@@ -76,17 +115,40 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Remove preview files
+      - name: Delete S3 bucket
         run: |
-          aws s3 rm s3://${{ secrets.AWS_S3_BUCKET_NAME }}/pr-${{ github.event.number }} --recursive
+          BUCKET_NAME="preview-pr-${{ github.event.number }}-${{ github.repository_owner }}"
+          aws s3 rm s3://$BUCKET_NAME --recursive
+          aws s3 rb s3://$BUCKET_NAME
 
-      - name: Comment cleanup
+      - name: Clean up PR description and comment
         uses: actions/github-script@v7
         with:
           script: |
             const prNumber = context.payload.number;
 
-            github.rest.issues.createComment({
+            // Get current PR details
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            // Remove preview section from PR body
+            const existingBody = pr.body || '';
+            const previewSectionRegex = /\n\n---\n\n🚀 \*\*Preview Environment\*\*[\s\S]*?_This preview will be automatically cleaned up when the PR is closed\._/;
+            const updatedBody = existingBody.replace(previewSectionRegex, '');
+
+            // Update PR description to remove preview section
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              body: updatedBody
+            });
+
+            // Add cleanup comment
+            await github.rest.issues.createComment({
               issue_number: prNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
