@@ -123,8 +123,8 @@ jobs:
         with:
           step: deactivate-env
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: preview-pr-${{ github.event.number }}
-          desc: Environment preview-pr-${{ github.event.number }} deactivated
+          env: preview
+          desc: Environment preview deactivated
 
       - name: Delete S3 bucket
         run: |
