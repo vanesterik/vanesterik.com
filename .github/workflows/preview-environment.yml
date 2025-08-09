@@ -92,7 +92,7 @@ jobs:
           status: success
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env: preview
-          env_url: http://preview-pr-${{ github.event.number }}-${{ github.repository_owner }}.s3-website-${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+          env_url: http://preview-pr-${{ github.event.number }}-${{ github.repository_owner }}.s3-website.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
       - name: Update deployment status (failure)
         uses: bobheadxi/deployments@v1
