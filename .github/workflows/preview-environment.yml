@@ -40,7 +40,7 @@ jobs:
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: preview-pr-${{ github.event.number }}
+          env: preview
           desc: Deploying PR #${{ github.event.number }} to preview environment
 
       - name: Configure AWS credentials
@@ -57,6 +57,18 @@ jobs:
           aws s3 mb s3://$BUCKET_NAME
           aws s3 website s3://$BUCKET_NAME --index-document index.html --error-document 404.html
 
+          # Set bucket policy for public read access
+          aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy '{
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Sid": "PublicReadGetObject",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": "s3:GetObject",
+              "Resource": "arn:aws:s3:::'$BUCKET_NAME'/*"
+            }]
+          }'
+
       - name: Deploy to S3
         run: |
           aws s3 sync ./apps/next/out s3://$BUCKET_NAME --delete
@@ -69,7 +81,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: success
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env: preview-pr-${{ github.event.number }}
+          env: preview
           env_url: http://preview-pr-${{ github.event.number }}-${{ github.repository_owner }}.s3-website-${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
       - name: Update deployment status (failure)
@@ -80,7 +92,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: failure
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env: preview-pr-${{ github.event.number }}
+          env: preview
 
   cleanup-preview:
     runs-on: ubuntu-latest
