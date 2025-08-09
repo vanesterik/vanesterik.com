@@ -8,4 +8,7 @@ const withTM = require('next-transpile-modules')([
 module.exports = withTM({
   output: 'export',
   reactStrictMode: true,
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
+  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
+  trailingSlash: true,
 })

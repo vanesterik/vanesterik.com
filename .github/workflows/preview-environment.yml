@@ -1,0 +1,110 @@
+name: Preview Environment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    name: Deploy PR Preview
+    if: github.event.action != 'closed'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4.0.1
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build application
+        run: pnpm --filter next build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /pr-${{ github.event.number }}
+
+      - name: Start deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: preview-pr-${{ github.event.number }}
+          desc: Deploying PR #${{ github.event.number }} to preview environment
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Create S3 bucket for PR
+        run: |
+          BUCKET_NAME="preview-pr-${{ github.event.number }}-${{ github.repository_owner }}"
+          echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
+          aws s3 mb s3://$BUCKET_NAME
+          aws s3 website s3://$BUCKET_NAME --index-document index.html --error-document 404.html
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync ./apps/next/out s3://$BUCKET_NAME --delete
+
+      - name: Update deployment status (success)
+        uses: bobheadxi/deployments@v1
+        if: success()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: success
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env: preview-pr-${{ github.event.number }}
+          env_url: http://preview-pr-${{ github.event.number }}-${{ github.repository_owner }}.s3-website-${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+
+      - name: Update deployment status (failure)
+        uses: bobheadxi/deployments@v1
+        if: failure()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: failure
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env: preview-pr-${{ github.event.number }}
+
+  cleanup-preview:
+    runs-on: ubuntu-latest
+    name: Cleanup Preview
+    if: github.event.action == 'closed'
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Deactivate deployment
+        uses: bobheadxi/deployments@v1
+        with:
+          step: deactivate-env
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: preview-pr-${{ github.event.number }}
+          desc: Environment preview-pr-${{ github.event.number }} deactivated
+
+      - name: Delete S3 bucket
+        run: |
+          BUCKET_NAME="preview-pr-${{ github.event.number }}-${{ github.repository_owner }}"
+          aws s3 rm s3://$BUCKET_NAME --recursive
+          aws s3 rb s3://$BUCKET_NAME
