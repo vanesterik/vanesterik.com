@@ -39,6 +39,7 @@ jobs:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
           env: preview
+          ref: ${{ github.head_ref }}
           desc: Deploying PR #${{ github.event.number }} to preview environment
 
       - name: Configure AWS credentials
