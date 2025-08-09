@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: start deployment
-        uses: bobheadxi/deployments@v1
+        uses: bobheadxi/deployments@f235d02c2daaaa84c710d013c7d39f7f0f8bf298
         id: deployment
         with:
           step: start
@@ -23,7 +23,7 @@ jobs:
       #   # ...
 
       - name: update deployment status
-        uses: bobheadxi/deployments@v1
+        uses: bobheadxi/deployments@f235d02c2daaaa84c710d013c7d39f7f0f8bf298
         if: always()
         with:
           step: finish
