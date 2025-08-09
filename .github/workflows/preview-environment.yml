@@ -31,8 +31,6 @@ jobs:
 
       - name: Build application
         run: pnpm --filter next build
-        env:
-          NEXT_PUBLIC_BASE_PATH: /pr-${{ github.event.number }}
 
       - name: Start deployment
         uses: bobheadxi/deployments@v1
@@ -55,26 +53,31 @@ jobs:
           BUCKET_NAME="preview-pr-${{ github.event.number }}-${{ github.repository_owner }}"
           echo "BUCKET_NAME=$BUCKET_NAME" >> $GITHUB_ENV
 
-          # Create bucket
-          aws s3 mb s3://$BUCKET_NAME
-
-          # Disable block public access
-          aws s3api put-public-access-block --bucket $BUCKET_NAME --public-access-block-configuration BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false
-
-          # Configure website hosting
-          aws s3 website s3://$BUCKET_NAME --index-document index.html --error-document 404.html
-
-          # Set bucket policy for public read access
-          aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy '{
-            "Version": "2012-10-17",
-            "Statement": [{
-              "Sid": "PublicReadGetObject",
-              "Effect": "Allow",
-              "Principal": "*",
-              "Action": "s3:GetObject",
-              "Resource": "arn:aws:s3:::'$BUCKET_NAME'/*"
-            }]
-          }'
+          # Check if bucket exists, create only if it doesn't
+          if ! aws s3api head-bucket --bucket $BUCKET_NAME 2>/dev/null; then
+            echo "Creating bucket $BUCKET_NAME"
+            aws s3 mb s3://$BUCKET_NAME
+            
+            # Disable block public access
+            aws s3api put-public-access-block --bucket $BUCKET_NAME --public-access-block-configuration BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false
+            
+            # Configure website hosting
+            aws s3 website s3://$BUCKET_NAME --index-document index.html --error-document 404.html
+            
+            # Set bucket policy for public read access
+            aws s3api put-bucket-policy --bucket $BUCKET_NAME --policy '{
+              "Version": "2012-10-17",
+              "Statement": [{
+                "Sid": "PublicReadGetObject",
+                "Effect": "Allow",
+                "Principal": "*",
+                "Action": "s3:GetObject",
+                "Resource": "arn:aws:s3:::'$BUCKET_NAME'/*"
+              }]
+            }'
+          else
+            echo "Bucket $BUCKET_NAME already exists, skipping creation"
+          fi
 
       - name: Deploy to S3
         run: |
