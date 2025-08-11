@@ -23,6 +23,7 @@
     "coverage": "vitest --coverage",
     "lint": "pnpm -r lint",
     "prepare": "husky install",
+    "release": "standard-version",
     "test": "vitest",
     "typecheck": "pnpm -r typecheck"
   }
