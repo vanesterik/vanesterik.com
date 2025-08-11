@@ -107,7 +107,7 @@ jobs:
 
   cleanup-preview:
     runs-on: ubuntu-latest
-    name: Cleanup Preview
+    name: Cleanup Preview Environment
     if: github.event.action == 'closed'
 
     steps:
