@@ -8,7 +8,7 @@ on:
 jobs:
   deploy-preview:
     runs-on: ubuntu-latest
-    name: Deploy PR Preview
+    name: Deploy Preview Environment
     if: github.event.action != 'closed'
 
     steps:
@@ -118,13 +118,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Deactivate deployment
+      - name: Deactivate preview environment
         uses: bobheadxi/deployments@v1
         with:
           step: deactivate-env
           token: ${{ secrets.GITHUB_TOKEN }}
           env: preview
-          desc: Environment preview deactivated
+          desc: Preview environment deactivated
 
       - name: Delete S3 bucket
         run: |
