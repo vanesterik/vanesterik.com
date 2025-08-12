@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  deploy-preview:
+  deploy-preview-environment:
     runs-on: ubuntu-latest
     name: Deploy Preview Environment
     if: github.event.action != 'closed'
@@ -23,8 +23,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4.0.1
         with:
-          node-version: '20'
-          cache: 'pnpm'
+          node-version: 20
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -105,7 +105,7 @@ jobs:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  cleanup-preview:
+  cleanup-preview-environment:
     runs-on: ubuntu-latest
     name: Cleanup Preview Environment
     if: github.event.action == 'closed'

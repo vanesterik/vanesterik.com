@@ -6,7 +6,7 @@ on:
       - 'v*.*.*'
 
 jobs:
-  deploy:
+  deploy-production-environment:
     runs-on: ubuntu-latest
     name: Deploy to Production
 
@@ -22,8 +22,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4.0.1
         with:
-          node-version: '20'
-          cache: 'pnpm'
+          node-version: 20
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
