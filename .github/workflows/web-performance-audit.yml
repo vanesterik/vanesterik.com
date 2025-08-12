@@ -1,0 +1,47 @@
+name: Web Performance Audit
+
+on:
+  workflow_run:
+    workflows: ['Preview Environment']
+    types: [completed]
+
+jobs:
+  run-web-performance-audit:
+    runs-on: ubuntu-latest
+    name: Run Web Performance Audit
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download preview url artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: preview-url
+
+      - name: Read preview url
+        id: read_preview_url
+        run: |
+          preview_url=$(cat preview-url.txt)
+          echo "preview_url=$preview_url" >> $GITHUB_OUTPUT
+
+      - name: Audit preview url using Lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            ${{ steps.read_preview_url.outputs.preview_url }}
+          uploadArtifacts: false
+          temporaryPublicStorage: false
