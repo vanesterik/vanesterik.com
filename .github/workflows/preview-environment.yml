@@ -84,29 +84,28 @@ jobs:
         run: |
           aws s3 sync ./apps/next/out s3://$BUCKET_NAME --delete
 
-      - name: Write preview url
-        id: write_preview_url
+      - name: Define preview url
+        id: define_preview_url
         run: |
-          PREVIEW_URL="http://preview-pr-${{ github.event.number }}-${{ github.repository_owner }}.s3-website.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com"
-          echo "$preview_url" > preview-url.txt
+          preview_url="http://preview-pr-${{ github.event.number }}-${{ github.repository_owner }}.s3-website.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com"
           echo "preview_url=$preview_url" >> $GITHUB_OUTPUT
-
-      - name: Upload preview url artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: preview-url
-          path: preview-url.txt
 
       - name: Update deployment status (success)
         uses: bobheadxi/deployments@v1
         if: success()
         with:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: ${{ steps.write_preview_url.outputs.preview_url }}
+          env_url: ${{ steps.define_preview_url.outputs.preview_url }}
           env: preview
           status: success
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Call web performance audit workflow
+        uses: ./.github/workflows/web-performance-audit.yml
+        if: success()
+        with:
+          preview_url: ${{ steps.define_preview_url.outputs.preview_url }}
 
       - name: Update deployment status (failure)
         uses: bobheadxi/deployments@v1

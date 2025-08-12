@@ -1,9 +1,11 @@
 name: Web Performance Audit
 
 on:
-  workflow_run:
-    workflows: ['Deploy Preview Environment']
-    types: [completed]
+  workflow_call:
+    inputs:
+      preview_url:
+        required: true
+        type: string
 
 jobs:
   run-web-performance-audit:
@@ -27,21 +29,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Download preview url artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: preview-url
-
-      - name: Read preview url
-        id: read_preview_url
-        run: |
-          preview_url=$(cat preview-url.txt)
-          echo "preview_url=$preview_url" >> $GITHUB_OUTPUT
-
       - name: Audit preview url using Lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
-            ${{ steps.read_preview_url.outputs.preview_url }}
+            ${{ inputs.preview_url }}
           uploadArtifacts: false
           temporaryPublicStorage: false
