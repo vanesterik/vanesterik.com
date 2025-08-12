@@ -39,7 +39,7 @@ jobs:
         uses: daun/playwright-report-summary@v3
         with:
           report-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          report-file: packages/e2e-tests/test-results/results.json
+          report-file: packages/e2e/test-results/results.json
 
       - name: Upload Playwright report (failure)
         uses: actions/upload-artifact@v4
