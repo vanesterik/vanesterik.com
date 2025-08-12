@@ -31,7 +31,7 @@ jobs:
         run: pnpm --filter e2e exec playwright install --with-deps
 
       - name: Run Playwright tests
-        run: pnpm --filter e2e exec playwright test
+        run: pnpm --filter e2e exec playwright test --reporter=json
 
       - name: Generate Playwright report summary (success)
         if: always()
@@ -39,7 +39,7 @@ jobs:
         uses: daun/playwright-report-summary@v3
         with:
           report-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          report-file: packages/e2e/test-results/results.json
+          report-file: results.json
 
       - name: Upload Playwright report (failure)
         uses: actions/upload-artifact@v4
