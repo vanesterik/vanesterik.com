@@ -2,7 +2,7 @@ name: Web Performance Audit
 
 on:
   workflow_run:
-    workflows: ['Preview Environment']
+    workflows: ['Deploy Preview Environment']
     types: [completed]
 
 jobs:
