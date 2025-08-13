@@ -1,4 +1,4 @@
-name: Run E2E Tests
+name: Run End-to-End Tests
 
 inputs:
   preview-url:
@@ -9,9 +9,11 @@ runs:
   steps:
     - name: Install Playwright browsers
       run: pnpm --filter e2e exec playwright install --with-deps
+      shell: bash
 
     - name: Run Playwright tests
       run: pnpm --filter e2e exec playwright test
+      shell: bash
 
     - name: Generate Playwright report summary (success)
       if: always()
