@@ -1,5 +1,8 @@
 name: Web Performance Audit
 
+permissions:
+  pull-requests: write
+
 on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
@@ -37,9 +40,19 @@ jobs:
           preview_url=$(cat /tmp/shared/preview_url.txt)
           echo "preview-url=$preview_url" >> $GITHUB_OUTPUT
 
-      - name: Audit preview url
+      - name: Run audit
+        id: run_audit
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
             ${{ steps.get_preview_url.outputs.preview-url }}
           uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Generate Lighthouse performance report
+        uses: marocchino/sticky-pull-request-comment@v2.9.4
+        with:
+          message: |
+            ## Lighthouse Performance Report
+
+            [View report](${{ steps.run_audit.outputs.links }})
