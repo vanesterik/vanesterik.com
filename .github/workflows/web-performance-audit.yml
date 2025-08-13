@@ -56,14 +56,18 @@ jobs:
             const links = ${{ steps.audit.outputs.links }};
             const manifest = ${{ steps.audit.outputs.manifest }};
 
-            const renderReportLink = (url) => links[url] ? `[Report](${links[url]})` : 'No Report';
+            const renderURL = (url) => {
+              const { pathname } = new URL(url);
+              return `[${pathname}](${url})`;
+            };
             const renderScore = (score) => {
               if (score === undefined) return 'N/A';
-              if (score >= 0.9) return `🔴 ${score}`;
-              if (score >= 0.8) return `🟡 ${score}`;
-              if (score >= 0.7) return `🟢 ${score}`;
+              if (score >= 0) return `🔺 ${score}`;
+              if (score >= 0.5) return `🟨 ${score}`;
+              if (score >= 0.9) return `🟢 ${score}`;
               return `🔵 ${score}`;
             };
+            const renderReportLink = (url) => links[url] ? `[Report](${links[url]})` : 'No Report';
 
             const comment = [
               '### Lighthouse performance report',
@@ -71,7 +75,7 @@ jobs:
               '| URL | Performance | Accessibility | Best Practices | SEO | Report |',
               '| --- | ----------- | ------------- | -------------- | --- | ------ |',
               ...manifest.map(result =>
-                `| ${result.url} | ${renderScore(result.summary.performance)} | ${renderScore(result.summary.accessibility)} | ${renderScore(result.summary['best-practices'])} | ${renderScore(result.summary.seo)} | ${renderReportLink(result.url)} |`
+                `| ${renderURL(result.url)} | ${renderScore(result.summary.performance)} | ${renderScore(result.summary.accessibility)} | ${renderScore(result.summary['best-practices'])} | ${renderScore(result.summary.seo)} | ${renderReportLink(result.url)} |`
               )
             ].join('\n');
 
