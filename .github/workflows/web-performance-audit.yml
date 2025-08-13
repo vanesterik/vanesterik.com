@@ -66,9 +66,9 @@ jobs:
             const renderScore = (score) => {
               const displayScore = score * 100;
               if (score === undefined) return 'N/A';
-              if (score <= 50) return `🔺 ${displayScore}`;
-              if (score <= 89) return `🟨 ${displayScore}`;
-              if (score <= 100) return `🟢 ${displayScore}`;
+              if (score <= 0.50) return `🔺 ${displayScore}`;
+              if (score <= 0.89) return `🟨 ${displayScore}`;
+              if (score <= 1.00) return `🟢 ${displayScore}`;
               return `🔵 ${displayScore}`;
             };
             const renderReportLink = (url) => links[url] ? `[View](${links[url]})` : 'No Report';
