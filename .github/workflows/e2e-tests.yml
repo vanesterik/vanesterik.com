@@ -31,8 +31,8 @@ jobs:
       - name: Get preview url
         id: get_preview_url
         run: |
-          preview-url=$(cat /tmp/shared/preview_url.txt)
-          echo "preview-url=$preview-url" >> $GITHUB_OUTPUT
+          preview_url=$(cat /tmp/shared/preview_url.txt)
+          echo "preview-url=$preview_url" >> $GITHUB_OUTPUT
 
       - name: Install Playwright browsers
         run: pnpm --filter e2e exec playwright install --with-deps

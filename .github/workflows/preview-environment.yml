@@ -86,7 +86,7 @@ jobs:
         if: success()
         with:
           path: /tmp/shared
-          key: preview-url-${{ github.event.number }}-${{ github.run_id }}
+          key: preview-url-${{ github.event.number }}
 
       - name: Update deployment status (success)
         uses: bobheadxi/deployments@v1
