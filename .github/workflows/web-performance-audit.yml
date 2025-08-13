@@ -46,6 +46,9 @@ jobs:
         with:
           urls: |
             ${{ steps.preview_url.outputs.preview_url }}
+            ${{ steps.preview_url.outputs.preview_url }}/about/
+            ${{ steps.preview_url.outputs.preview_url }}/projects/
+            ${{ steps.preview_url.outputs.preview_url }}/posts/
           uploadArtifacts: true
           temporaryPublicStorage: true
 
