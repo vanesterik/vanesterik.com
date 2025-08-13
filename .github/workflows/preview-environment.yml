@@ -73,15 +73,15 @@ jobs:
         run: |
           aws s3 sync ./apps/next/out s3://$BUCKET_NAME --delete
 
-      - name: Define preview url
-        id: define_preview_url
+      - name: Define preview URL
+        id: preview_url
         run: |
           preview_url="http://preview-pr-${{ github.event.number }}-${{ github.repository_owner }}.s3-website.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com"
           echo "preview_url=$preview_url" >> $GITHUB_OUTPUT
           mkdir -p /tmp/shared
           echo "$preview_url" > /tmp/shared/preview_url.txt
 
-      - name: Cache preview url
+      - name: Cache preview URL
         uses: actions/cache/save@v4
         if: success()
         with:
@@ -93,7 +93,7 @@ jobs:
         if: success()
         with:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: ${{ steps.define_preview_url.outputs.preview_url }}
+          env_url: ${{ steps.preview_url.outputs.preview_url }}
           env: preview
           status: success
           step: finish

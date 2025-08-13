@@ -31,8 +31,7 @@ jobs:
           path: /tmp/shared
           key: preview-url-${{ github.event.number }}
 
-      - name: Get preview url
-        id: get_preview_url
+      - name: Get preview URL
         run: |
           preview_url=$(cat /tmp/shared/preview_url.txt)
           echo "preview-url=$preview_url" >> $GITHUB_OUTPUT
@@ -45,7 +44,6 @@ jobs:
 
       - name: Generate Playwright report summary (success)
         if: always()
-        id: summary
         uses: daun/playwright-report-summary@v3
         with:
           report-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

@@ -28,24 +28,24 @@ jobs:
       - name: Setup node
         uses: ./.github/actions/setup-node
 
-      - name: Restore cached preview url
+      - name: Restore cached preview URL
         uses: actions/cache/restore@v4
         with:
           path: /tmp/shared
           key: preview-url-${{ github.event.number }}
 
-      - name: Get preview url
-        id: get_preview_url
+      - name: Get preview URL
+        id: preview_url
         run: |
           preview_url=$(cat /tmp/shared/preview_url.txt)
-          echo "preview-url=$preview_url" >> $GITHUB_OUTPUT
+          echo "preview_url=$preview_url" >> $GITHUB_OUTPUT
 
       - name: Run audit
-        id: run_audit
+        id: audit
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
-            ${{ steps.get_preview_url.outputs.preview-url }}
+            ${{ steps.preview_url.outputs.preview_url }}
           uploadArtifacts: true
           temporaryPublicStorage: true
 
@@ -58,6 +58,6 @@ jobs:
             | URL | Performance | Accessibility | Best Practices | SEO |
             | --- | ----------- | ------------- | -------------- | --- |
 
-            {% for result in fromJson(steps.run_audit.outputs.manifest) %}
+            {{% for result in fromJson(steps.audit.outputs.manifest) %}}
             | {{ result.url }} | {{ result.summary.performance }} | {{ result.summary.accessibility }} | {{ result.summary['best-practices'] }} | {{ result.summary.seo }} |
-            {% endfor %}
+            {{% endfor %}}
