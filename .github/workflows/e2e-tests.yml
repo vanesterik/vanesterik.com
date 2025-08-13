@@ -26,7 +26,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: /tmp/shared
-          key: preview-url-${{ github.event.number }}-${{ github.run_id }}
+          key: preview-url-${{ github.event.number }}
 
       - name: Get preview url
         id: get_preview_url
