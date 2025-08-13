@@ -49,17 +49,15 @@ jobs:
           uploadArtifacts: true
           temporaryPublicStorage: true
 
-      - name: Print outputs
-        run: |
-          echo ${{ steps.run_audit.outputs.manifest }}
-          echo ${{ steps.run_audit.outputs.links }}
-
       - name: Generate Lighthouse performance report
         uses: marocchino/sticky-pull-request-comment@v2.9.4
         with:
           message: |
             ### Lighthouse performance report
 
-            #### Details
+            | URL | Performance | Accessibility | Best Practices | SEO |
+            | --- | ----------- | ------------- | -------------- | --- |
 
-            ![report](https://camo.githubusercontent.com/47b6576f1f6780dcaeea86acd7b9ec6656ac471c3ab8acec86ab4b944c94bec1/68747470733a2f2f69636f6e67722e616d2f6f637469636f6e732f7061636b6167652e7376673f73697a653d313426636f6c6f723d616262346266)&nbsp;[Open report ↗︎](${{ steps.run_audit.outputs.links }})
+            {% for result in fromJson(steps.run_audit.outputs.manifest) %}
+            | {{ result.url }} | {{ result.summary.performance }} | {{ result.summary.accessibility }} | {{ result.summary['best-practices'] }} | {{ result.summary.seo }} |
+            {% endfor %}
