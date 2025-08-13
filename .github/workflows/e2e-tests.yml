@@ -24,8 +24,6 @@ jobs:
 
       - name: Setup node
         uses: ./.github/actions/setup-node
-        with:
-          install-dependencies: false
 
       - name: Restore cached preview url
         uses: actions/cache/restore@v4
