@@ -27,7 +27,7 @@ jobs:
         with:
           install-dependencies: false
 
-      - name: Restore cached preview URL
+      - name: Restore cached preview url
         uses: actions/cache/restore@v4
         with:
           path: /tmp/shared

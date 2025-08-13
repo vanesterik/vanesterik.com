@@ -5,10 +5,6 @@ inputs:
     required: true
     default: 20
 
-  install-dependencies:
-    required: true
-    default: true
-
 runs:
   using: 'composite'
   steps:
@@ -24,6 +20,5 @@ runs:
         cache: pnpm
 
     - name: Install dependencies
-      if: ${{ inputs.install-dependencies == 'true' }}
       run: pnpm install --frozen-lockfile
       shell: bash
