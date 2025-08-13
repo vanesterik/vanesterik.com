@@ -1,0 +1,16 @@
+name: Run Web Performance Audit
+
+inputs:
+  preview-url:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Audit preview url using Lighthouse
+      uses: treosh/lighthouse-ci-action@v12
+      with:
+        urls: |
+          ${{ inputs.preview_url }}
+        uploadArtifacts: false
+        temporaryPublicStorage: false
