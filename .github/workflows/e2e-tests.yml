@@ -1,31 +1,40 @@
 name: End-to-End Tests
+
 on:
-  push:
-    branches: [main]
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
 
 jobs:
-  run-e2e-tests:
+  e2e-tests:
     runs-on: ubuntu-latest
-    name: Run End-to-End Tests
-    timeout-minutes: 60
+    name: Run Playwright Tests
+
     steps:
+      - name: Wait for preview deployment
+        uses: lewagon/wait-on-check-action@v1.3.1
+        with:
+          ref: ${{ github.head_ref }}
+          check-name: 'Deploy Preview Environment'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          run_install: false
-
       - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+        uses: ./.github/actions/setup-node
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Restore cached preview url
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/shared
+          key: preview-url-${{ github.event.number }}
+
+      - name: Get preview URL
+        run: |
+          preview_url=$(cat /tmp/shared/preview_url.txt)
+          echo "preview-url=$preview_url" >> $GITHUB_OUTPUT
 
       - name: Install Playwright browsers
         run: pnpm --filter e2e exec playwright install --with-deps
@@ -35,7 +44,6 @@ jobs:
 
       - name: Generate Playwright report summary (success)
         if: always()
-        id: summary
         uses: daun/playwright-report-summary@v3
         with:
           report-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

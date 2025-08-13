@@ -15,19 +15,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          run_install: false
-
       - name: Setup Node
-        uses: actions/setup-node@v4.0.1
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        uses: ./.github/actions/setup-node
 
       - name: Build application
         run: pnpm --filter next build
@@ -84,12 +73,27 @@ jobs:
         run: |
           aws s3 sync ./apps/next/out s3://$BUCKET_NAME --delete
 
+      - name: Define preview URL
+        id: preview_url
+        run: |
+          preview_url="http://preview-pr-${{ github.event.number }}-${{ github.repository_owner }}.s3-website.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com"
+          echo "preview_url=$preview_url" >> $GITHUB_OUTPUT
+          mkdir -p /tmp/shared
+          echo "$preview_url" > /tmp/shared/preview_url.txt
+
+      - name: Cache preview URL
+        uses: actions/cache/save@v4
+        if: success()
+        with:
+          path: /tmp/shared
+          key: preview-url-${{ github.event.number }}
+
       - name: Update deployment status (success)
         uses: bobheadxi/deployments@v1
         if: success()
         with:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-          env_url: http://preview-pr-${{ github.event.number }}-${{ github.repository_owner }}.s3-website.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
+          env_url: ${{ steps.preview_url.outputs.preview_url }}
           env: preview
           status: success
           step: finish

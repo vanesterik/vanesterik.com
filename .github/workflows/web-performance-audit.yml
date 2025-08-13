@@ -1,0 +1,116 @@
+name: Web Performance Audit
+
+permissions:
+  pull-requests: write
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    name: Run Lighthouse Audit
+
+    steps:
+      - name: Wait for preview deployment
+        uses: lewagon/wait-on-check-action@v1.3.1
+        with:
+          ref: ${{ github.head_ref }}
+          check-name: 'Deploy Preview Environment'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+
+      - name: Restore cached preview URL
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/shared
+          key: preview-url-${{ github.event.number }}
+
+      - name: Get preview URL
+        id: preview_url
+        run: |
+          preview_url=$(cat /tmp/shared/preview_url.txt)
+          echo "preview_url=$preview_url" >> $GITHUB_OUTPUT
+
+      - name: Run Lighthouse audit
+        id: audit
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            ${{ steps.preview_url.outputs.preview_url }}
+            ${{ steps.preview_url.outputs.preview_url }}/about/
+            ${{ steps.preview_url.outputs.preview_url }}/projects/
+            ${{ steps.preview_url.outputs.preview_url }}/posts/
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Generate and post performance report
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const links = ${{ steps.audit.outputs.links }};
+            const manifest = ${{ steps.audit.outputs.manifest }};
+
+            const renderURL = (url) => {
+              const { pathname } = new URL(url);
+              return `[${pathname}](${url})`;
+            };
+            const renderScore = (score) => {
+              const displayScore = score * 100;
+              if (score === undefined) return 'N/A';
+              if (score <= 0.50) return `🔺 ${displayScore}`;
+              if (score <= 0.89) return `🟨 ${displayScore}`;
+              if (score <= 1.00) return `🟢 ${displayScore}`;
+              return `🔵 ${displayScore}`;
+            };
+            const renderReportLink = (url) => links[url] ? `[View](${links[url]})` : 'No Report';
+
+            const comment = [
+              '### Lighthouse performance report',
+              '',
+              '| URL | Performance | Accessibility | Best Practices | SEO | Report |',
+              '| --- | ----------- | ------------- | -------------- | --- | ------ |',
+              ...manifest.map(result =>
+                `| ${renderURL(result.url)} | ${renderScore(result.summary.performance)} | ${renderScore(result.summary.accessibility)} | ${renderScore(result.summary['best-practices'])} | ${renderScore(result.summary.seo)} | ${renderReportLink(result.url)} |`
+              )
+            ].join('\n');
+
+            const identifier = '<!-- lighthouse-performance-report -->';
+            const body = identifier + '\n' + comment;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const existingComment = comments.find(comment =>
+              comment.body.includes(identifier)
+            );
+
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                comment_id: existingComment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            }
