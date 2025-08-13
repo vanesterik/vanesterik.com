@@ -49,6 +49,11 @@ jobs:
           uploadArtifacts: true
           temporaryPublicStorage: true
 
+      - name: Print outputs
+        run: |
+          echo ${{ steps.run_audit.outputs.manifest }}
+          echo ${{ steps.run_audit.outputs.links }}
+
       - name: Generate Lighthouse performance report
         uses: marocchino/sticky-pull-request-comment@v2.9.4
         with:
