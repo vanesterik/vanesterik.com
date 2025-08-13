@@ -62,12 +62,12 @@ jobs:
             };
             const renderScore = (score) => {
               if (score === undefined) return 'N/A';
-              if (score >= 0) return `🔺 ${score}`;
-              if (score >= 0.5) return `🟨 ${score}`;
-              if (score >= 0.9) return `🟢 ${score}`;
+              if (score <= 0.50) return `🔺 ${score}`;
+              if (score <= 0.89) return `🟨 ${score}`;
+              if (score <= 1.00) return `🟢 ${score}`;
               return `🔵 ${score}`;
             };
-            const renderReportLink = (url) => links[url] ? `[Report](${links[url]})` : 'No Report';
+            const renderReportLink = (url) => links[url] ? `[View](${links[url]})` : 'No Report';
 
             const comment = [
               '### Lighthouse performance report',
