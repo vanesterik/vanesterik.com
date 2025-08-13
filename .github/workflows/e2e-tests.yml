@@ -1,0 +1,59 @@
+name: End-to-End Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    name: Run End-to-End Tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Wait for preview deployment
+        uses: lewagon/wait-on-check-action@v1.3.1
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'Deploy Preview Environment'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
+      - name: Restore cached preview URL
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/shared
+          key: preview-url-${{ github.event.number }}-${{ github.run_id }}
+
+      - name: Get preview url
+        id: get_preview_url
+        run: |
+          preview-url=$(cat /tmp/shared/preview_url.txt)
+          echo "preview-url=$preview-url" >> $GITHUB_OUTPUT
+
+      - name: Install Playwright browsers
+        run: pnpm --filter e2e exec playwright install --with-deps
+        shell: bash
+
+      - name: Run Playwright tests
+        run: pnpm --filter e2e exec playwright test
+        shell: bash
+
+      - name: Generate Playwright report summary (success)
+        if: always()
+        id: summary
+        uses: daun/playwright-report-summary@v3
+        with:
+          report-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          report-file: packages/e2e/test-results/results.json
+
+      - name: Upload Playwright report (failure)
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

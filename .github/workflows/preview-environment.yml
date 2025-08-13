@@ -78,6 +78,15 @@ jobs:
         run: |
           preview_url="http://preview-pr-${{ github.event.number }}-${{ github.repository_owner }}.s3-website.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com"
           echo "preview_url=$preview_url" >> $GITHUB_OUTPUT
+          mkdir -p /tmp/shared
+          echo "$preview_url" > /tmp/shared/preview_url.txt
+
+      - name: Cache preview url
+        uses: actions/cache/save@v4
+        if: success()
+        with:
+          path: /tmp/shared
+          key: preview-url-${{ github.event.number }}-${{ github.run_id }}
 
       - name: Update deployment status (success)
         uses: bobheadxi/deployments@v1
@@ -89,18 +98,6 @@ jobs:
           status: success
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run end-to-end tests
-        uses: ./.github/actions/run-e2e-tests
-        if: success()
-        with:
-          preview-url: ${{ steps.define_preview_url.outputs.preview_url }}
-
-      - name: Run web performance audit
-        uses: ./.github/actions/run-web-performance-audit
-        if: success()
-        with:
-          preview_url: ${{ steps.define_preview_url.outputs.preview_url }}
 
       - name: Update deployment status (failure)
         uses: bobheadxi/deployments@v1
