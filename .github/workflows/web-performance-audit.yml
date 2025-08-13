@@ -49,15 +49,50 @@ jobs:
           uploadArtifacts: true
           temporaryPublicStorage: true
 
-      - name: Generate Lighthouse performance report
-        uses: marocchino/sticky-pull-request-comment@v2.9.4
+      - name: Generate and post Lighthouse performance report
+        uses: actions/github-script@v7
         with:
-          message: |
-            ### Lighthouse performance report
+          script: |
+            const manifest = ${{ steps.audit.outputs.manifest }};
 
-            | URL | Performance | Accessibility | Best Practices | SEO |
-            | --- | ----------- | ------------- | -------------- | --- |
+            const comment = [
+              '### Lighthouse performance report',
+              '',
+              '| URL | Performance | Accessibility | Best Practices | SEO |',
+              '| --- | ----------- | ------------- | -------------- | --- |',
+              ...manifest.map(result =>
+                `| ${result.url} | ${result.summary.performance} | ${result.summary.accessibility} | ${result.summary['best-practices']} | ${result.summary.seo} |`
+              )
+            ].join('\n');
 
-            {{% for result in fromJson(steps.audit.outputs.manifest) %}}
-            | {{ result.url }} | {{ result.summary.performance }} | {{ result.summary.accessibility }} | {{ result.summary['best-practices'] }} | {{ result.summary.seo }} |
-            {{% endfor %}}
+            const identifier = '<!-- lighthouse-performance-report -->';
+            const body = identifier + '\n' + comment;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const existingComment = comments.find(comment =>
+              comment.body.includes(identifier)
+            );
+
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                comment_id: existingComment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            }
