@@ -23,7 +23,7 @@ jobs:
           wait-interval: 10
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node
         uses: ./.github/actions/setup-node
