@@ -19,6 +19,10 @@
   --text-intro--line-height: 1.3;
   --text-item: clamp(1.375rem, 2.3vw, 2.875rem);
   --text-item--line-height: 1.3;
+
+  /* How far the footer's links and the about page's list items sit from the
+     left edge of their block, so the two line up */
+  --spacing-indent: 5.5rem;
 }
 
 @theme inline {

@@ -17,11 +17,11 @@ export const AboutSection = ({
 }: AboutSectionProps) => (
   <section className="mt-[6.5em] text-intro">
     <h2>{title}</h2>
-    {/* The list's em values are in the heading's size, so the indent is the
-        same whatever size the items are */}
+    {/* The list's em values are in the heading's size, whatever size the
+        items are. Its indent is the footer's, so the two line up */}
     <ul
       className={cn(
-        'mt-[1em] flex flex-col pl-[2em]',
+        'mt-[1em] flex flex-col pl-indent',
         isCompact
           ? 'gap-1 *:text-base *:text-muted-foreground'
           : 'gap-[1em] *:text-item',
