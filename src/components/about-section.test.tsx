@@ -28,4 +28,13 @@ describe('AboutSection', () => {
     const items = within(screen.getByRole('list')).getAllByRole('listitem')
     expect(items.map((item) => item.textContent)).toEqual(['Toyota', 'Hanno'])
   })
+
+  it('indents its list by the shared indent, like the footer', () => {
+    render(
+      <AboutSection title="Companies I Worked With">
+        <li>Toyota</li>
+      </AboutSection>,
+    )
+    expect(screen.getByRole('list')).toHaveClass('pl-indent')
+  })
 })
