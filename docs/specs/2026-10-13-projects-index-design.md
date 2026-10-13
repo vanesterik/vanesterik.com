@@ -167,7 +167,7 @@ type TerminalFrameProps = { name: string; lines: { text: string; tone: Tone }[] 
 
 Beneath the preview:
 - the description at full width, in the `prose` style the posts use;
-- beneath it, two columns of `<dl>` pairs, which stack when narrow; labels in `muted-foreground`:
+- beneath it, two columns of `<dl>` pairs in Lausanne regular at `text-sm`, one size below the description, which stack when narrow; labels in `muted-foreground`:
   - **left:** `stack` (joined with ` · `), `role` and `year`;
   - **right:** the links, each as a label and its address without the protocol, opened as the footer opens links (`getLinkTargetProps`):
     - the primary link: "visit site" for `web`, "install" for `cli`, "npm" for `lib`;

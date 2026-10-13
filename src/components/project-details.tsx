@@ -19,9 +19,9 @@ type ProjectDetailsProps = {
 }
 
 /**
- * A project's description in the prose style, with two columns of definition
- * pairs beneath it: its facts, and its links by address. The columns stack on
- * narrow screens
+ * A project's description in the prose style, with two columns of smaller
+ * definition pairs beneath it: its facts, and its links by address. The
+ * columns stack on narrow screens
  */
 export const ProjectDetails = ({ project }: ProjectDetailsProps) => {
   const { type, description, stack, role, year, links } = project
@@ -36,7 +36,8 @@ export const ProjectDetails = ({ project }: ProjectDetailsProps) => {
       <div className="prose max-w-none font-sans">
         <p>{description}</p>
       </div>
-      <div className="grid gap-6 font-mono text-xs uppercase sm:grid-cols-2">
+      {/* Lausanne like the description, one size smaller */}
+      <div className="grid gap-6 font-sans text-sm sm:grid-cols-2">
         <dl className={LIST}>
           <dt className="text-muted-foreground">stack</dt>
           <dd>{stack.join(' · ')}</dd>
