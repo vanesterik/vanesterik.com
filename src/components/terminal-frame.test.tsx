@@ -52,4 +52,17 @@ describe('TerminalFrame', () => {
     ).toHaveAttribute('src', '/projects/froopyland.png')
     expect(container.querySelector('pre')).toBeNull()
   })
+
+  it('runs a screenshot to the edges, under a slim title bar', () => {
+    const { container } = render(
+      <TerminalFrame
+        name="froopyland"
+        image="/projects/froopyland.png"
+        alt="Screenshot of froopyland"
+      />,
+    )
+    // Like the browser frame: no padding around the screenshot
+    expect(container.firstChild).toHaveClass('overflow-hidden')
+    expect(container.firstChild).not.toHaveClass('p-4')
+  })
 })
