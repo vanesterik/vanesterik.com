@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="md:mr-[10%] md:ml-[45%]">
+    <div className="mx-auto w-full max-w-160">
       {/* Nothing visible precedes the table, so the heading is only for
           screen readers */}
       <h1 className="sr-only">Projects</h1>

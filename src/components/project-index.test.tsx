@@ -20,20 +20,25 @@ describe('ProjectIndex', () => {
     }
   })
 
-  it('names each row by its type, name and status, without the dot or marker', () => {
+  it('names each row by its name, type, year and status, without the dot', () => {
     render(<ProjectIndex projects={projects} />)
-    const lorem = row(/^web\s*lorem/)
-    expect(lorem).toHaveAccessibleName(/^web\s*lorem.*live$/)
-    expect(lorem).not.toHaveAccessibleName(/[●+]/)
+    const lorem = row(/^lorem/)
+    expect(lorem).toHaveAccessibleName(/^lorem\s*web\s*2026\s*live$/)
+    expect(lorem).not.toHaveAccessibleName(/●/)
+  })
+
+  it('leaves the stack to the details', () => {
+    render(<ProjectIndex projects={projects} />)
+    expect(row(/^lorem/)).not.toHaveTextContent('next.js')
   })
 
   it('opens a row to its preview and details', async () => {
     const user = userEvent.setup()
     render(<ProjectIndex projects={projects} />)
 
-    await user.click(row(/^web\s*lorem/))
+    await user.click(row(/^lorem/))
 
-    expect(row(/^web\s*lorem/)).toHaveAttribute('aria-expanded', 'true')
+    expect(row(/^lorem/)).toHaveAttribute('aria-expanded', 'true')
     expect(
       screen.getByRole('img', { name: 'Screenshot of lorem' }),
     ).toBeInTheDocument()
@@ -44,13 +49,13 @@ describe('ProjectIndex', () => {
     const user = userEvent.setup()
     render(<ProjectIndex projects={projects} />)
 
-    await user.click(row(/^web\s*lorem/))
-    await user.click(row(/^cli\s*ipsum/))
-    expect(row(/^web\s*lorem/)).toHaveAttribute('aria-expanded', 'false')
+    await user.click(row(/^lorem/))
+    await user.click(row(/^ipsum/))
+    expect(row(/^lorem/)).toHaveAttribute('aria-expanded', 'false')
     expect(screen.getByText('zsh — ipsum')).toBeInTheDocument()
 
-    await user.click(row(/^cli\s*ipsum/))
-    expect(row(/^cli\s*ipsum/)).toHaveAttribute('aria-expanded', 'false')
+    await user.click(row(/^ipsum/))
+    expect(row(/^ipsum/)).toHaveAttribute('aria-expanded', 'false')
     expect(screen.queryByText('zsh — ipsum')).toBeNull()
   })
 
@@ -58,17 +63,10 @@ describe('ProjectIndex', () => {
     const user = userEvent.setup()
     render(<ProjectIndex projects={projects} />)
 
-    await user.click(row(/^lib\s*adipiscing/))
+    await user.click(row(/^adipiscing/))
 
     expect(screen.queryByRole('img')).toBeNull()
     expect(screen.queryByText(/^zsh/)).toBeNull()
     expect(screen.getByText(/^Nemo enim/)).toBeInTheDocument()
-  })
-
-  it('hides the header row from screen readers', () => {
-    const { container } = render(<ProjectIndex projects={projects} />)
-    expect(container.querySelector('[aria-hidden="true"]')).toHaveTextContent(
-      'typenamestackyearstatus',
-    )
   })
 })

@@ -17,7 +17,7 @@ function AccordionItem({
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
-      className={cn('border-accent border-b', className)}
+      className={className}
       {...props}
     />
   )
