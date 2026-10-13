@@ -16,6 +16,7 @@ export const COLOR_TOKENS = [
   'info',
   'warning',
   'success',
+  'danger',
 ] as const
 
 export type ColorToken = (typeof COLOR_TOKENS)[number]
