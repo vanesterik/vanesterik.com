@@ -1,12 +1,14 @@
 import projects from '@/content/projects.json'
 
-export const PROJECT_TYPES = ['web', 'cli', 'lib'] as const
+export const PROJECT_TYPES = ['web', 'cli', 'lib', 'zsh', 'ml'] as const
 export const STATUSES = ['live', 'wip', 'archived'] as const
 export const TONES = ['command', 'info', 'warn', 'success'] as const
+export const FRAMES = ['browser', 'terminal'] as const
 
 export type ProjectType = (typeof PROJECT_TYPES)[number]
 export type Status = (typeof STATUSES)[number]
 export type Tone = (typeof TONES)[number]
+export type Frame = (typeof FRAMES)[number]
 
 export type TerminalLine = {
   text: string
@@ -25,6 +27,8 @@ export type Project = {
   url?: string
   preview: {
     image?: string
+    // The frame a screenshot shows in; the browser frame by default
+    frame?: Frame
     terminal?: TerminalLine[]
     video?: string
     recording?: string
@@ -53,7 +57,7 @@ const PROJECT_FIELDS = [
   'preview',
   'links',
 ]
-const PREVIEW_FIELDS = ['image', 'terminal', 'video', 'recording']
+const PREVIEW_FIELDS = ['image', 'frame', 'terminal', 'video', 'recording']
 const LINK_FIELDS = ['primary', 'source', 'writeup']
 
 const isRecord = (value: unknown): value is Raw =>
@@ -151,13 +155,16 @@ const readProject = (raw: unknown, index: number): Project => {
   const links = readRecord(raw, 'links', LINK_FIELDS, where)
   const type = readOneOf(raw, 'type', PROJECT_TYPES, where)
 
-  // Websites preview as a screenshot, tools as a terminal session; the other
-  // kind would be dropped without a word
+  // A preview is a screenshot, in the browser or the terminal frame, or a
+  // terminal session; websites don't have sessions
+  if (preview.image !== undefined && preview.terminal !== undefined) {
+    fail(where, 'a preview is a screenshot or a terminal session, not both')
+  }
+  if (preview.frame !== undefined && preview.image === undefined) {
+    fail(where, '"frame" needs a screenshot')
+  }
   if (type === 'web' && preview.terminal !== undefined) {
     fail(where, 'a web project shows an image, not a terminal session')
-  }
-  if (type !== 'web' && preview.image !== undefined) {
-    fail(where, `a ${type} project shows a terminal session, not an image`)
   }
 
   return {
@@ -172,6 +179,10 @@ const readProject = (raw: unknown, index: number): Project => {
     url: readOptionalString(raw, 'url', where),
     preview: {
       image: readOptionalString(preview, 'image', where),
+      frame:
+        preview.frame === undefined
+          ? undefined
+          : readOneOf(preview, 'frame', FRAMES, where),
       terminal: readTerminal(preview, where),
       video: readOptionalString(preview, 'video', where),
       recording: readOptionalString(preview, 'recording', where),

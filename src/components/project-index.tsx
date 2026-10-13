@@ -17,19 +17,19 @@ import type { Project } from '@/lib/projects'
 // Name, type, year and the status dot; narrow enough for a phone as well
 const COLUMNS = 'grid grid-cols-[1fr_3rem_3rem_1rem] gap-x-4'
 
+// A screenshot in the browser frame, or in the terminal frame for a terminal
+// app; otherwise a terminal session; or nothing
 const ProjectPreview = ({ project }: { project: Project }) => {
-  const { type, name, url, preview } = project
+  const { name, url, preview } = project
+  const alt = `Screenshot of ${name}`
 
-  if (type === 'web' && preview.image) {
-    return (
-      <BrowserFrame
-        url={url}
-        image={preview.image}
-        alt={`Screenshot of ${name}`}
-      />
-    )
+  if (preview.image && preview.frame === 'terminal') {
+    return <TerminalFrame name={name} image={preview.image} alt={alt} />
   }
-  if (type !== 'web' && preview.terminal) {
+  if (preview.image) {
+    return <BrowserFrame url={url} image={preview.image} alt={alt} />
+  }
+  if (preview.terminal) {
     return <TerminalFrame name={name} lines={preview.terminal} />
   }
   return null

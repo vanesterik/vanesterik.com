@@ -1,12 +1,51 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
-import { getProjects } from '@/lib/projects'
+import type { Project } from '@/lib/projects'
 
 import { ProjectIndex } from './project-index'
 
-const projects = getProjects()
+const project = (overrides: Partial<Project>): Project => ({
+  slug: 'lorem',
+  type: 'web',
+  name: 'lorem',
+  stack: ['next.js', 'mdx'],
+  year: 2026,
+  status: 'live',
+  role: 'author',
+  description: 'Lorem ipsum.',
+  preview: {},
+  links: {},
+  ...overrides,
+})
+
+// One project per kind of preview
+const projects = [
+  project({
+    url: 'https://lorem.example.com',
+    preview: { image: '/projects/lorem.jpg' },
+    links: { primary: 'https://lorem.example.com' },
+  }),
+  project({
+    slug: 'ipsum',
+    type: 'cli',
+    name: 'ipsum',
+    preview: { terminal: [{ text: 'ipsum pack', tone: 'command' }] },
+  }),
+  project({
+    slug: 'dolor',
+    type: 'cli',
+    name: 'dolor',
+    preview: { image: '/projects/dolor.png', frame: 'terminal' },
+  }),
+  project({
+    slug: 'sit',
+    type: 'zsh',
+    name: 'sit',
+    description: 'Sit amet.',
+  }),
+]
 
 const row = (name: RegExp) => screen.getByRole('button', { name })
 
@@ -32,7 +71,7 @@ describe('ProjectIndex', () => {
     expect(row(/^lorem/)).not.toHaveTextContent('next.js')
   })
 
-  it('opens a row to its preview and details', async () => {
+  it('opens a row to its screenshot and details', async () => {
     const user = userEvent.setup()
     render(<ProjectIndex projects={projects} />)
 
@@ -61,14 +100,28 @@ describe('ProjectIndex', () => {
     expect(screen.queryByText('zsh — ipsum')).toBeNull()
   })
 
+  it('shows a terminal app screenshot in the terminal frame', async () => {
+    const user = userEvent.setup()
+    render(<ProjectIndex projects={projects} />)
+
+    await user.click(row(/^dolor/))
+
+    const frame = screen
+      .getByText('zsh — dolor')
+      .closest('figure') as HTMLElement
+    expect(
+      within(frame).getByRole('img', { name: 'Screenshot of dolor' }),
+    ).toBeInTheDocument()
+  })
+
   it('shows no preview for a project without one', async () => {
     const user = userEvent.setup()
     render(<ProjectIndex projects={projects} />)
 
-    await user.click(row(/^adipiscing/))
+    await user.click(row(/^sit/))
 
     expect(screen.queryByRole('img')).toBeNull()
-    expect(screen.queryByText(/^zsh/)).toBeNull()
-    expect(screen.getByText(/^Nemo enim/)).toBeInTheDocument()
+    expect(screen.queryByText(/^zsh —/)).toBeNull()
+    expect(screen.getByText('Sit amet.')).toBeInTheDocument()
   })
 })

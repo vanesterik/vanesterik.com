@@ -95,15 +95,65 @@ describe('getProjects', () => {
     ).toThrow('lorem: "terminal" must have at least one line')
   })
 
-  it('fails on a preview that does not fit the type', () => {
+  it('fails on a terminal session for a web project', () => {
     expect(() =>
       getProjects([
         project({ preview: { terminal: [{ text: 'ls', tone: 'command' }] } }),
       ]),
     ).toThrow('lorem: a web project shows an image, not a terminal session')
+  })
+
+  it('accepts zsh and ml projects, and a screenshot for any type', () => {
+    const projects = getProjects([
+      project({
+        type: 'zsh',
+        preview: { terminal: [{ text: 'cd', tone: 'command' }] },
+      }),
+      project({ slug: 'ipsum', type: 'ml', preview: { image: '/a.jpg' } }),
+      project({
+        slug: 'dolor',
+        type: 'cli',
+        preview: { image: '/b.png', frame: 'terminal' },
+      }),
+    ])
+    expect(projects.map(({ type }) => type)).toEqual(['zsh', 'ml', 'cli'])
+    expect(projects[2].preview.frame).toBe('terminal')
+  })
+
+  it('fails on an unknown frame', () => {
     expect(() =>
-      getProjects([project({ type: 'cli', preview: { image: '/a.svg' } })]),
-    ).toThrow('lorem: a cli project shows a terminal session, not an image')
+      getProjects([project({ preview: { image: '/a.jpg', frame: 'phone' } })]),
+    ).toThrow('lorem: "frame" must be one of browser, terminal')
+  })
+
+  it('fails on a frame without a screenshot', () => {
+    expect(() =>
+      getProjects([
+        project({
+          type: 'cli',
+          preview: {
+            terminal: [{ text: 'ls', tone: 'command' }],
+            frame: 'terminal',
+          },
+        }),
+      ]),
+    ).toThrow('lorem: "frame" needs a screenshot')
+  })
+
+  it('fails on both a screenshot and a terminal session', () => {
+    expect(() =>
+      getProjects([
+        project({
+          type: 'cli',
+          preview: {
+            image: '/a.png',
+            terminal: [{ text: 'ls', tone: 'command' }],
+          },
+        }),
+      ]),
+    ).toThrow(
+      'lorem: a preview is a screenshot or a terminal session, not both',
+    )
   })
 
   it('names a project by its position when its slug is missing', () => {
