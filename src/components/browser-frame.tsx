@@ -5,7 +5,9 @@ type BrowserFrameProps = {
 }
 
 /**
- * A website's screenshot in a browser window, with its address in the top bar
+ * A website's screenshot in a browser window, with its address in the top bar.
+ * The screenshot is a path under public/, so it gets the base path the site
+ * (or Storybook) is served under, which a plain <img> doesn't add by itself
  */
 export const BrowserFrame = ({ url, image, alt }: BrowserFrameProps) => (
   <figure className="overflow-hidden rounded-md border border-accent">
@@ -21,7 +23,7 @@ export const BrowserFrame = ({ url, image, alt }: BrowserFrameProps) => (
     </div>
     {/* biome-ignore lint/performance/noImgElement: the static export has no image optimizer, so next/image adds nothing */}
     <img
-      src={image}
+      src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}${image}`}
       alt={alt}
       loading="lazy"
       className="aspect-[16/10] w-full object-cover"

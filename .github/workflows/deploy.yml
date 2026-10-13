@@ -79,6 +79,10 @@ jobs:
 
       - name: Build Storybook
         run: npm run build-storybook
+        env:
+          # GitHub Pages serves Storybook under /vanesterik.dev/, so files
+          # from public/ (such as project screenshots) need the prefix
+          NEXT_PUBLIC_BASE_PATH: /vanesterik.dev
 
       - name: Upload Storybook
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
