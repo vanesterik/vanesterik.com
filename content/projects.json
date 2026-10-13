@@ -1,0 +1,108 @@
+[
+  {
+    "slug": "lorem",
+    "type": "web",
+    "name": "lorem",
+    "stack": ["next.js", "mdx"],
+    "year": 2026,
+    "status": "live",
+    "role": "design + build",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.",
+    "url": "https://lorem.example.com",
+    "preview": { "image": "/projects/placeholder.svg" },
+    "links": {
+      "primary": "https://lorem.example.com",
+      "source": "https://example.com/lorem",
+      "writeup": "https://example.com/lorem/write-up"
+    }
+  },
+  {
+    "slug": "ipsum",
+    "type": "cli",
+    "name": "ipsum",
+    "stack": ["bash", "tar"],
+    "year": 2026,
+    "status": "wip",
+    "role": "author",
+    "description": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.",
+    "preview": {
+      "terminal": [
+        { "text": "ipsum pack ./lorem", "tone": "command" },
+        { "text": "scanning 12,480 files …", "tone": "info" },
+        { "text": "skipped 316 dolor entries", "tone": "warn" },
+        { "text": "wrote lorem.tar.zst", "tone": "success" }
+      ]
+    },
+    "links": {
+      "primary": "https://example.com/ipsum/install",
+      "source": "https://example.com/ipsum"
+    }
+  },
+  {
+    "slug": "dolor",
+    "type": "lib",
+    "name": "dolor",
+    "stack": ["typescript"],
+    "year": 2025,
+    "status": "live",
+    "role": "maintainer",
+    "description": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "preview": {
+      "terminal": [
+        { "text": "npm install dolor", "tone": "command" },
+        { "text": "resolving 3 packages …", "tone": "info" },
+        { "text": "1 deprecated sit amet", "tone": "warn" },
+        { "text": "added dolor@2.1.0", "tone": "success" }
+      ]
+    },
+    "links": {
+      "primary": "https://example.com/dolor/npm",
+      "source": "https://example.com/dolor",
+      "writeup": "https://example.com/dolor/write-up"
+    }
+  },
+  {
+    "slug": "sit-amet",
+    "type": "web",
+    "name": "sit amet",
+    "stack": ["react", "redux", "sitecore"],
+    "year": 2023,
+    "status": "archived",
+    "role": "front-end lead",
+    "description": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.",
+    "url": "https://sit-amet.example.com",
+    "preview": { "image": "/projects/placeholder.svg" },
+    "links": { "primary": "https://sit-amet.example.com" }
+  },
+  {
+    "slug": "consectetur",
+    "type": "cli",
+    "name": "consectetur",
+    "stack": ["python"],
+    "year": 2021,
+    "status": "archived",
+    "role": "author",
+    "description": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
+    "preview": {
+      "terminal": [
+        { "text": "consectetur --check ./data", "tone": "command" },
+        { "text": "reading 48 lorem files …", "tone": "info" },
+        { "text": "2 files without ipsum", "tone": "warn" },
+        { "text": "46 files ok", "tone": "success" }
+      ]
+    },
+    "links": { "source": "https://example.com/consectetur" }
+  },
+  {
+    "slug": "adipiscing",
+    "type": "lib",
+    "name": "adipiscing",
+    "stack": ["javascript", "canvas"],
+    "year": 2019,
+    "status": "wip",
+    "role": "author",
+    "description": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.",
+    "preview": {},
+    "links": {}
+  }
+]
