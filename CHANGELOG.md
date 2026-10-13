@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.6.0](https://github.com/vanesterik/vanesterik.dev/compare/v1.5.0...v1.6.0) (2026-10-13)
+
+### Features
+
+* add info, warning and success color tokens ([58cef9c](https://github.com/vanesterik/vanesterik.dev/commit/58cef9cc8a581be7118159d36303cea48637fd2e)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* add the project details ([0d392d2](https://github.com/vanesterik/vanesterik.dev/commit/0d392d2e557ef29c827e2f6dc9a9eee82cdcfea6)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* add the project status and preview frames ([0771dde](https://github.com/vanesterik/vanesterik.dev/commit/0771dde6a41c9e9caea25a27f6501ab4dd7dfe32)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* add the projects content model with placeholder projects ([41e4df1](https://github.com/vanesterik/vanesterik.dev/commit/41e4df13d2c308cb280974d2024c6b5d8764ffdb)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* add zsh and ml projects, and screenshots in either frame ([d394a92](https://github.com/vanesterik/vanesterik.dev/commit/d394a927b27b996b960a1f710bb2234fb14fbf3f)), references [#75](https://github.com/vanesterik/vanesterik.dev/issues/75)
+* border a terminal app screenshot like the browser frame ([bd734f9](https://github.com/vanesterik/vanesterik.dev/commit/bd734f9107a205ecdc07ddb8067621f70bc9a074)), references [#75](https://github.com/vanesterik/vanesterik.dev/issues/75)
+* close an open project panel with a hairline ([0b98804](https://github.com/vanesterik/vanesterik.dev/commit/0b988040a1176b9be02d61ad599407b8443a99c8)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* color the status dots green, red and grey ([2c983ec](https://github.com/vanesterik/vanesterik.dev/commit/2c983ec392fc72c5247bde15516e1aa57f923259)), references [#75](https://github.com/vanesterik/vanesterik.dev/issues/75)
+* give the status tooltip a caret ([10e1c13](https://github.com/vanesterik/vanesterik.dev/commit/10e1c13026b85dd85d5bf3820f0ed689595fc19f)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* lead an open project with its description in bold ([f7bcadb](https://github.com/vanesterik/vanesterik.dev/commit/f7bcadbbab816eaf6fff18faa0ce13be3f8a357a)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* make the project index a minimal, borderless table ([70eadae](https://github.com/vanesterik/vanesterik.dev/commit/70eadaeacd29292bc410ada8a611e53f50dcb159)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* mark the current page in the navigation ([9a5d633](https://github.com/vanesterik/vanesterik.dev/commit/9a5d6337d918269f957712d1675d5c9ecbe592cb)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* replace the placeholder projects with Koen's projects ([3ca3f46](https://github.com/vanesterik/vanesterik.dev/commit/3ca3f4655d61e5bdf36f85df39a8800676a1ce55)), references [#75](https://github.com/vanesterik/vanesterik.dev/issues/75)
+* replace the projects page's coming soon with the project index ([0ec8c55](https://github.com/vanesterik/vanesterik.dev/commit/0ec8c55abd54bae88e466d680d80c6d3360bfcc8)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* round and pad the project rows like the buttons ([ba71d7e](https://github.com/vanesterik/vanesterik.dev/commit/ba71d7e90a1e073a8947dd06984dfb910dd83729)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* run a terminal app screenshot to the frame's edges ([684189f](https://github.com/vanesterik/vanesterik.dev/commit/684189f3a7205d5e42560de12ac584b153881a67)), references [#75](https://github.com/vanesterik/vanesterik.dev/issues/75)
+* set the project summaries in Lausanne at text-sm ([ade9b92](https://github.com/vanesterik/vanesterik.dev/commit/ade9b92354f9c9cfd927735766b70a744b101843)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* show a project's status as a dot with a tooltip ([dc3a783](https://github.com/vanesterik/vanesterik.dev/commit/dc3a783b4223feb01dea318c5f012f766cff918a)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* show a terminal app screenshot without a title bar ([0b60393](https://github.com/vanesterik/vanesterik.dev/commit/0b603933666f3e70bee23d7ee3411b513be71696)), references [#75](https://github.com/vanesterik/vanesterik.dev/issues/75)
+* show project details as prose and definition pairs ([c9d6613](https://github.com/vanesterik/vanesterik.dev/commit/c9d6613fc1e5df88c91ec851a55b22efb4503f11)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* show Sports Direct's trainers listing as its preview ([c49f13a](https://github.com/vanesterik/vanesterik.dev/commit/c49f13ac85480ebc32b365441f681e14913ad8d5)), references [#75](https://github.com/vanesterik/vanesterik.dev/issues/75)
+* show the status tooltip in the primary colors ([47acb38](https://github.com/vanesterik/vanesterik.dev/commit/47acb380195ad390a091f0149ec0ce4593b8208d)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* use a more legible Froopyland screenshot ([c32d48b](https://github.com/vanesterik/vanesterik.dev/commit/c32d48bf6a10ab3b1c9818ae1326402156a2e988)), references [#75](https://github.com/vanesterik/vanesterik.dev/issues/75)
+
+### Bug Fixes
+
+* align the about page's indents with the footer ([95fa6a5](https://github.com/vanesterik/vanesterik.dev/commit/95fa6a567a0659ecd8e110998ac7f9951f5a2079)), references [#71](https://github.com/vanesterik/vanesterik.dev/issues/71)
+* keep the phone menu's current item readable on hover and focus ([3871232](https://github.com/vanesterik/vanesterik.dev/commit/38712327c70547b4b06acaf8ea8c5e664d89cc7e)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* reject unknown fields and misplaced previews in the projects content ([fe2c119](https://github.com/vanesterik/vanesterik.dev/commit/fe2c119b6031061421d452fca7ad16bae3364a27)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+* serve project screenshots under the site's base path ([afee121](https://github.com/vanesterik/vanesterik.dev/commit/afee12118682e8e5add4fb054d6bba1e9f188896)), references [#73](https://github.com/vanesterik/vanesterik.dev/issues/73)
+
 ## [1.5.0](https://github.com/vanesterik/vanesterik.dev/compare/v1.4.0...v1.5.0) (2026-10-10)
 
 ### Features
