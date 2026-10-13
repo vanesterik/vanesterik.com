@@ -32,7 +32,7 @@ The brief asks to follow the site's own stack, fonts, colors and layout wherever
 |---|---|---|
 | Font | IBM Plex Mono 400/500/600 | NB International Pro Mono, the site's mono, which has one weight |
 | Column | Centred, at most 960px wide | Centred, at most 640px wide, like the posts |
-| Table look | Hairline borders, a header row, `+`/`−` markers, a `stack` column | No borders except the browser frame's, no header row, no markers; `stack` only in the details |
+| Table look | Hairline borders, a header row, `+`/`−` markers, a `stack` column | No borders except the browser frame's and a hairline under an open panel, no header row, no markers; `stack` only in the details |
 | Row text | 15px mono, lowercase | `text-xs` mono, uppercase, like the header and footer |
 | Column order | type · name · stack · year · status | name · type · year · status dot |
 | Status | A dot plus its label | The dot only, with the label in a tooltip on hover (and for screen readers) |
@@ -126,7 +126,7 @@ Client component. It renders an Accordion with one item per project, inside a `T
 - The same columns fit a phone, so there is no narrow layout.
 
 **Panel**
-- The Accordion content, under its row in the same item, with about 8px of padding above and 32px below.
+- The Accordion content, under its row in the same item, with about 8px of padding above and 32px below. A 1px `accent` border closes it at the bottom, easing the step back into the rows; it's the table's only border.
 - The preview at full width: `BrowserFrame` for `web` with an image, `TerminalFrame` for `cli` and `lib` with a terminal session, and nothing when a project has neither.
 - `ProjectDetails` beneath it.
 
@@ -177,7 +177,7 @@ Beneath the preview:
 
 ### `components/ui/tooltip.tsx`
 
-The shadcn/ui Tooltip (Radix), written by hand like the Accordion and restyled with the tokens: no arrow and no animation, mono uppercase `text-xs` in `primary` and `primary-foreground`, opening without a delay.
+The shadcn/ui Tooltip (Radix), written by hand like the Accordion and restyled with the tokens: a caret in its own color pointing at the trigger, no animation, mono uppercase `text-xs` in `primary` and `primary-foreground`, opening without a delay.
 
 ### Footer
 
