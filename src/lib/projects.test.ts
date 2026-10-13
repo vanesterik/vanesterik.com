@@ -60,11 +60,50 @@ describe('getProjects', () => {
     ],
     [
       'an unknown tone',
-      { preview: { terminal: [{ text: 'ls', tone: 'warning' }] } },
+      { type: 'cli', preview: { terminal: [{ text: 'ls', tone: 'warning' }] } },
       'lorem: "tone" must be one of command, info, warn, success',
     ],
   ])('fails, naming the project, on %s', (_, overrides, message) => {
     expect(() => getProjects([project(overrides)])).toThrow(message)
+  })
+
+  it.each([
+    ['the project', { link: {} }, 'lorem: unknown field "link"'],
+    [
+      'the preview',
+      { preview: { img: '/a.svg' } },
+      'lorem: unknown field "preview.img"',
+    ],
+    [
+      'the links',
+      { links: { 'write-up': 'https://example.com' } },
+      'lorem: unknown field "links.write-up"',
+    ],
+  ])('fails on an unknown field in %s', (_, overrides, message) => {
+    expect(() => getProjects([project(overrides)])).toThrow(message)
+  })
+
+  it('fails on null where an object belongs', () => {
+    expect(() => getProjects([project({ preview: null })])).toThrow(
+      'lorem: "preview" must be an object',
+    )
+  })
+
+  it('fails on a terminal session without lines', () => {
+    expect(() =>
+      getProjects([project({ type: 'cli', preview: { terminal: [] } })]),
+    ).toThrow('lorem: "terminal" must have at least one line')
+  })
+
+  it('fails on a preview that does not fit the type', () => {
+    expect(() =>
+      getProjects([
+        project({ preview: { terminal: [{ text: 'ls', tone: 'command' }] } }),
+      ]),
+    ).toThrow('lorem: a web project shows an image, not a terminal session')
+    expect(() =>
+      getProjects([project({ type: 'cli', preview: { image: '/a.svg' } })]),
+    ).toThrow('lorem: a cli project shows a terminal session, not an image')
   })
 
   it('names a project by its position when its slug is missing', () => {

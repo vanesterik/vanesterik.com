@@ -38,6 +38,24 @@ export type Project = {
 
 type Raw = Record<string, unknown>
 
+// Every field a project, its preview and its links may have, so a typo (such
+// as "write-up" for "writeup") fails the build instead of dropping a link
+const PROJECT_FIELDS = [
+  'slug',
+  'type',
+  'name',
+  'stack',
+  'year',
+  'status',
+  'role',
+  'description',
+  'url',
+  'preview',
+  'links',
+]
+const PREVIEW_FIELDS = ['image', 'terminal', 'video', 'recording']
+const LINK_FIELDS = ['primary', 'source', 'writeup']
+
 const isRecord = (value: unknown): value is Raw =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
@@ -69,9 +87,26 @@ const readOneOf = <T extends string>(
   return value as T
 }
 
-const readRecord = (raw: Raw, field: string, where: string) => {
-  const value = raw[field] ?? {}
+const checkFields = (
+  raw: Raw,
+  allowed: string[],
+  where: string,
+  prefix = '',
+) => {
+  for (const key of Object.keys(raw)) {
+    if (!allowed.includes(key)) fail(where, `unknown field "${prefix}${key}"`)
+  }
+}
+
+const readRecord = (
+  raw: Raw,
+  field: string,
+  allowed: string[],
+  where: string,
+) => {
+  const value = raw[field] === undefined ? {} : raw[field]
   if (!isRecord(value)) return fail(where, `"${field}" must be an object`)
+  checkFields(value, allowed, where, `${field}.`)
   return value
 }
 
@@ -79,6 +114,9 @@ const readTerminal = (preview: Raw, where: string) => {
   const lines = preview.terminal
   if (lines === undefined) return undefined
   if (!Array.isArray(lines)) return fail(where, '"terminal" must be a list')
+  if (!lines.length) {
+    return fail(where, '"terminal" must have at least one line')
+  }
 
   return lines.map((line) => {
     if (!isRecord(line)) return fail(where, 'a terminal line must be an object')
@@ -95,6 +133,7 @@ const readProject = (raw: unknown, index: number): Project => {
 
   // Name the project by its slug where it has one
   const where = typeof raw.slug === 'string' && raw.slug ? raw.slug : position
+  checkFields(raw, PROJECT_FIELDS, where)
   const { stack, year } = raw
 
   if (
@@ -108,12 +147,22 @@ const readProject = (raw: unknown, index: number): Project => {
     fail(where, '"year" must be a whole number')
   }
 
-  const preview = readRecord(raw, 'preview', where)
-  const links = readRecord(raw, 'links', where)
+  const preview = readRecord(raw, 'preview', PREVIEW_FIELDS, where)
+  const links = readRecord(raw, 'links', LINK_FIELDS, where)
+  const type = readOneOf(raw, 'type', PROJECT_TYPES, where)
+
+  // Websites preview as a screenshot, tools as a terminal session; the other
+  // kind would be dropped without a word
+  if (type === 'web' && preview.terminal !== undefined) {
+    fail(where, 'a web project shows an image, not a terminal session')
+  }
+  if (type !== 'web' && preview.image !== undefined) {
+    fail(where, `a ${type} project shows a terminal session, not an image`)
+  }
 
   return {
     slug: readString(raw, 'slug', where),
-    type: readOneOf(raw, 'type', PROJECT_TYPES, where),
+    type,
     name: readString(raw, 'name', where),
     stack: stack as string[],
     year: year as number,
@@ -137,8 +186,9 @@ const readProject = (raw: unknown, index: number): Project => {
 
 /**
  * Get the projects in content/projects.json, checked and newest first: by
- * year, keeping the file's order within a year. A project with a missing or
- * unknown value fails the build, named by its slug.
+ * year, keeping the file's order within a year. A project with a missing,
+ * unknown or misplaced value, or an unknown field, fails the build, named by
+ * its slug.
  */
 export const getProjects = (items: unknown = projects): Project[] => {
   if (!Array.isArray(items)) {
