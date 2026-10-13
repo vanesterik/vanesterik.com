@@ -1,3 +1,5 @@
+import { withBasePath } from '@/lib/base-path'
+
 type BrowserFrameProps = {
   url?: string
   image: string
@@ -23,7 +25,7 @@ export const BrowserFrame = ({ url, image, alt }: BrowserFrameProps) => (
     </div>
     {/* biome-ignore lint/performance/noImgElement: the static export has no image optimizer, so next/image adds nothing */}
     <img
-      src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}${image}`}
+      src={withBasePath(image)}
       alt={alt}
       loading="lazy"
       className="aspect-[16/10] w-full object-cover"

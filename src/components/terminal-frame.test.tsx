@@ -37,4 +37,19 @@ describe('TerminalFrame', () => {
     expect(container.firstChild).toHaveClass('dark')
     expect(container.querySelector('pre')?.lastChild).toHaveTextContent(/^\$/)
   })
+
+  it('shows a screenshot of a terminal app instead of lines', () => {
+    const { container } = render(
+      <TerminalFrame
+        name="froopyland"
+        image="/projects/froopyland.png"
+        alt="Screenshot of froopyland"
+      />,
+    )
+    expect(screen.getByText('zsh — froopyland')).toBeInTheDocument()
+    expect(
+      screen.getByRole('img', { name: 'Screenshot of froopyland' }),
+    ).toHaveAttribute('src', '/projects/froopyland.png')
+    expect(container.querySelector('pre')).toBeNull()
+  })
 })

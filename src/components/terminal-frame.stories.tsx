@@ -4,10 +4,13 @@ import { getProjects } from '@/lib/projects'
 
 import { TerminalFrame } from './terminal-frame'
 
-const ipsum = getProjects().find(({ slug }) => slug === 'ipsum')
+// The first project with a terminal session, whichever it is
+const session = getProjects().find(({ preview }) => preview.terminal)
 
+// Typed without the component: its props are a union (lines or a
+// screenshot), which Storybook can't infer args from
 const meta = {
-  component: TerminalFrame,
+  title: 'terminal-frame',
   decorators: [
     (Story) => (
       <div className="w-160">
@@ -15,15 +18,18 @@ const meta = {
       </div>
     ),
   ],
-  args: {
-    name: 'ipsum',
-    lines: ipsum?.preview.terminal ?? [],
-  },
-} satisfies Meta<typeof TerminalFrame>
+} satisfies Meta
 
 export default meta
 
 type Story = StoryObj<typeof meta>
 
 // Stays dark in the light theme too
-export const Default: Story = {}
+export const Session: Story = {
+  render: () => (
+    <TerminalFrame
+      name={session?.name ?? 'session'}
+      lines={session?.preview.terminal ?? []}
+    />
+  ),
+}
