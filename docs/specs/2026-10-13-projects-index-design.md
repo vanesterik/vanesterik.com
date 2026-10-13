@@ -1,6 +1,6 @@
 # Projects index: an `ls -l` style list of projects
 
-Status: approved in conversation on 2026-10-13, for story #73, pending review of this document.
+Status: approved in conversation on 2026-10-13, for story #73. Revised the same day, after a first look in the browser, for a more minimal table: no borders, no header row, fewer columns and the status in a tooltip.
 
 ## Purpose
 
@@ -31,9 +31,12 @@ The brief asks to follow the site's own stack, fonts, colors and layout wherever
 | Topic | Brief | This design |
 |---|---|---|
 | Font | IBM Plex Mono 400/500/600 | NB International Pro Mono, the site's mono, which has one weight |
-| Column | Centred, at most 960px wide | The about page's column: from `md`, starting at 45% of the width with a 10% right margin |
-| Expanded panel | Preview and details side by side | The preview at full width, with the details in columns beneath it |
-| Narrow layout | At a viewport of 640px or less | When the table itself is narrower than 32rem (container query), as the 45% column is on tablets |
+| Column | Centred, at most 960px wide | Centred, at most 640px wide, like the posts |
+| Table look | Hairline borders, a header row, `+`/`−` markers, a `stack` column | No borders except the browser frame's, no header row, no markers; `stack` only in the details |
+| Row text | 15px mono, lowercase | `text-xs` mono, uppercase, like the header and footer |
+| Column order | type · name · stack · year · status | name · type · year · status dot |
+| Status | A dot plus its label | The dot only, with the label in a tooltip on hover (and for screen readers) |
+| Expanded panel | Preview and details side by side | The preview at full width; the description beneath it at full width in the `prose` style; then two columns of `<dl>` pairs |
 | Status and terminal colors | Hex values from the mockup | New tokens with GitHub light and dark values, from the Shiki themes the code blocks already use |
 | Links | Accent blue | The site's link style: the text color, `highlight` on hover |
 | Terminal background | `#141414` in both themes | The `secondary` token of the dark theme in both themes, through a `dark` class on the frame |
@@ -49,7 +52,7 @@ The brief asks to follow the site's own stack, fonts, colors and layout wherever
 | Order | Newest first by `year`, then in file order |
 | Expanding rows | shadcn/ui Accordion (Radix), `type="single"` and `collapsible`: one row open at a time, an open row closes when clicked |
 | Rendering | The index is a client component (the Accordion). The frames, status and details render on the server or the client alike |
-| Type | NB International Pro Mono throughout, lowercase, 15px on a 1.6 line height; labels `text-xs` in `muted-foreground` |
+| Type | Rows in NB International Pro Mono, `text-xs`, uppercase; the description in the `prose` style (Lausanne); detail labels in `muted-foreground` |
 | Colors | Tokens only. New: `info` (blue), `warning` (orange), `success` (green) |
 | Images | Plain `<img>`, lazy-loaded, as the static export has no image optimizer |
 | Current page | `NavLink`, a client component using `usePathname`, ignoring the trailing slash |
@@ -102,38 +105,25 @@ The screenshot placeholder is `public/projects/placeholder.svg`: a neutral 16:10
 
 ### `app/projects/page.tsx`
 
-Server component that renders, in the about page's column (`md:ml-[45%] md:mr-[10%]`):
+Server component that renders, in a centred column at most 640px wide (`mx-auto w-full max-w-160`), like the posts:
 - `<h1 className="sr-only">Projects</h1>`, as nothing visible precedes the table;
 - `<ProjectIndex projects={getProjects()} />`.
 
 ### `components/project-index.tsx`
 
-Client component. It renders an `@container` wrapper, a header row and an Accordion with one item per project.
-
-**Header row**
-- `type`, `name`, `stack`, `year` and `status` as small grey labels, with an empty last column for the marker.
-- A 1px top border in `foreground` and a 1px bottom border in `accent`.
-- `aria-hidden`: each row's button already reads out its values.
+Client component. It renders an Accordion with one item per project, inside a `TooltipProvider` for the status dots. There is no header row and there are no borders.
 
 **Rows**
-- Each row is an Accordion item with a 1px `accent` bottom border.
-- The trigger is a full-width `<button>` with `aria-expanded` and `aria-controls` (from Radix), at least 52px tall, with its cells baseline-aligned.
-- Cells:
-  - `type`, in `muted-foreground`;
+- The trigger is a full-width `<button>` with `aria-expanded` and `aria-controls` (from Radix), at least 44px tall, with its cells baseline-aligned.
+- Text: NB International Pro Mono, `text-xs`, uppercase, as in the header and footer.
+- Cells, in a grid of `1fr 3rem 3rem 1rem` with a 16px gap:
   - `name`;
-  - `stack`, joined with ` · `;
+  - `type`, in `muted-foreground`;
   - `year`;
-  - `ProjectStatus`;
-  - the marker, `+` when closed and `−` when open, right-aligned, in `muted-foreground`, `aria-hidden`.
+  - `ProjectStatus`, the dot, right-aligned.
 - Hover: `bg-secondary`. Keyboard focus: a 2px `info` outline inset in the row.
 - Keyboard: Tab reaches the rows, Enter and Space open or close them, and the arrow keys move between rows (Radix).
-
-**Columns**, by the wrapper's own width:
-
-| Width | Columns | Hidden |
-|---|---|---|
-| At least 32rem (`@lg`) | `56px 2fr 2fr 56px 96px 24px`, 16px gap | Nothing |
-| Narrower | `44px 1fr 84px 20px` | `stack` and `year`, and their headers |
+- The same columns fit a phone, so there is no narrow layout.
 
 **Panel**
 - The Accordion content, under its row in the same item, with about 8px of padding above and 32px below.
@@ -142,7 +132,10 @@ Client component. It renders an `@container` wrapper, a header row and an Accord
 
 ### `components/project-status.tsx`
 
-A `●` dot and the status label. The dot is `info` for `live`, `warning` for `wip` and `muted-foreground` for `archived`, and is `aria-hidden`. The label is always shown, in the text color, so color is never the only signal.
+A `●` dot, `info` for `live`, `warning` for `wip` and `muted-foreground` for `archived`.
+- Hovering the dot shows the status ("live", "wip" or "archived") in a tooltip (`ui/tooltip.tsx`, Radix), styled like the dropdown items: mono, uppercase, `text-xs`, on `secondary`.
+- The label is also in the DOM as visually hidden text, so screen readers read it as part of the row, and color is never the only signal.
+- Touch screens have no hover, so on phones the status is the dot's color only.
 
 ### `components/browser-frame.tsx`
 
@@ -172,16 +165,23 @@ type TerminalFrameProps = { name: string; lines: { text: string; tone: Tone }[] 
 
 ### `components/project-details.tsx`
 
-Beneath the preview, in columns with a 32px gap that wrap and stack when narrow:
-- the description;
-- a `<dl>` with `stack`, `role` and `year`, the labels in `muted-foreground` in a 72px column;
-- the links, each prefixed with `→` and opened as the footer opens links (`getLinkTargetProps`):
-  - the primary link: "visit site" for `web`, "install" for `cli`, "npm" for `lib`;
-  - "source";
-  - "write-up";
-  - each left out when it has no URL.
+Beneath the preview:
+- the description at full width, in the `prose` style the posts use;
+- beneath it, two columns of `<dl>` pairs, which stack when narrow; labels in `muted-foreground`:
+  - **left:** `stack` (joined with ` · `), `role` and `year`;
+  - **right:** the links, each as a label and its address without the protocol, opened as the footer opens links (`getLinkTargetProps`):
+    - the primary link: "visit site" for `web`, "install" for `cli`, "npm" for `lib`;
+    - "source";
+    - "write-up", a link to an article about the project;
+    - each left out when it has no URL, and the column left out without any links.
 
-`stack` and `year` are always in the `<dl>`, so they stay visible on narrow screens where their columns are hidden.
+### `components/ui/tooltip.tsx`
+
+The shadcn/ui Tooltip (Radix), written by hand like the Accordion and restyled with the tokens: no arrow and no animation, mono uppercase `text-xs` on `secondary`, opening without a delay.
+
+### Footer
+
+`copyright` in `content/layout.json` drops "· MIT licensed". The `LICENSE` file stays.
 
 ### `components/ui/accordion.tsx`
 
@@ -215,17 +215,17 @@ Vitest and Testing Library, next to each file:
   - opening a row sets `aria-expanded` and shows its panel;
   - opening another row closes the first;
   - clicking an open row closes it;
-  - the header row is hidden from screen readers.
+  - each row reads its name, type, year and status, and shows the status in a tooltip on hovering the dot.
 - **`project-status.test.tsx`:** the label for each status.
 - **`browser-frame.test.tsx`:** the URL without its protocol, and the alt text.
 - **`terminal-frame.test.tsx`:** the command prefix, a class per tone, and the final prompt.
 - **`project-details.test.tsx`:** the primary link's label per type, and missing links left out.
 - **`nav-link.test.tsx`:** `aria-current` on the current page only, with or without a trailing slash.
 
-Storybook gets stories for `ProjectIndex`, `ProjectStatus`, `BrowserFrame`, `TerminalFrame`, `ProjectDetails` and the Accordion.
+Storybook gets stories for `ProjectIndex`, `ProjectStatus`, `BrowserFrame`, `TerminalFrame`, `ProjectDetails`, the Accordion and the Tooltip.
 
 In the browser:
-- 1512px (the wide table), 768px (the narrow table in the 45% column) and 375px (no sideways scroll);
+- a wide screen, 768px and 375px (no sideways scroll), with the status tooltip on hovering a dot;
 - both themes, including the terminal frame in the light theme;
 - the keyboard: Tab, Enter and the arrow keys;
 - the navigation's current page on every page.
