@@ -13,6 +13,9 @@ export const COLOR_TOKENS = [
   'highlight',
   'highlight-foreground',
   'muted-foreground',
+  'info',
+  'warning',
+  'success',
 ] as const
 
 export type ColorToken = (typeof COLOR_TOKENS)[number]
