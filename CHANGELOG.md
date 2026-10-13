@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.6.1](https://github.com/vanesterik/vanesterik.dev/compare/v1.6.0...v1.6.1) (2026-10-13)
+
+### Bug Fixes
+
+* separate the footer from the content on mobile ([98c5a9a](https://github.com/vanesterik/vanesterik.dev/commit/98c5a9a771f8791dd6b7c9d1f02b80bc4333f8bb)), closes [#78](https://github.com/vanesterik/vanesterik.dev/issues/78)
+
 ## [1.6.0](https://github.com/vanesterik/vanesterik.dev/compare/v1.5.0...v1.6.0) (2026-10-13)
 
 ### Features
