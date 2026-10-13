@@ -1,6 +1,6 @@
 # Projects index: an `ls -l` style list of projects
 
-Status: approved in conversation on 2026-10-13, for story #73. Revised the same day, after a first look in the browser, for a more minimal table: no borders, no header row, fewer columns and the status in a tooltip.
+Status: approved in conversation on 2026-10-13, for story #73. Extended for Koen's own projects (story #75): the `zsh` and `ml` types, screenshots in either frame, and green, red and grey status dots. Revised the same day, after a first look in the browser, for a more minimal table: no borders, no header row, fewer columns and the status in a tooltip.
 
 ## Purpose
 
@@ -15,7 +15,7 @@ Success means:
 ## Scope
 
 In scope:
-- the index page, with placeholder projects;
+- the index page, with Koen's projects (placeholders until story #75);
 - the browser and terminal preview frames, with static content;
 - three new color tokens;
 - marking the current page in the navigation, on every page.
@@ -67,7 +67,7 @@ Each project in `content/projects.json`:
 | Field | Type | Notes |
 |---|---|---|
 | `slug` | string | Unique |
-| `type` | `web` \| `cli` \| `lib` | Picks the preview frame and the primary link's label |
+| `type` | `web` \| `cli` \| `lib` \| `zsh` \| `ml` | Picks the primary link's label and the type column |
 | `name` | string | |
 | `stack` | string[] | Shown joined with ` · ` |
 | `year` | number | |
@@ -75,7 +75,8 @@ Each project in `content/projects.json`:
 | `role` | string | For example `design + build`, `author`, `maintainer` |
 | `description` | string | One sentence on the problem and what was built |
 | `url` | string, optional | Shown in the browser frame's top bar |
-| `preview.image` | string, optional | Path of the screenshot under `public/` |
+| `preview.image` | string, optional | Path of the screenshot under `public/`, for any type |
+| `preview.frame` | `browser` \| `terminal`, optional | The frame the screenshot shows in; `browser` by default, `terminal` for a terminal app |
 | `preview.terminal` | `{ text, tone }[]`, optional | `tone` is `command`, `info`, `warn` or `success` |
 | `preview.video` | string, optional | Later story; not rendered |
 | `preview.recording` | string, optional | Later story; not rendered |
@@ -87,19 +88,28 @@ Each project in `content/projects.json`:
 
 The build fails with an error naming the project's slug, or its position when the slug is missing, when:
 - a required field is missing or of the wrong type;
-- `type`, `status` or a terminal line's `tone` isn't one of its values;
-- two projects share a slug.
+- `type`, `status`, `preview.frame` or a terminal line's `tone` isn't one of its values;
+- two projects share a slug;
+- a field is unknown, an object is `null`, or a terminal session has no lines;
+- a project has both a screenshot and a terminal session, a `preview.frame` without a screenshot, or a `web` project has a terminal session.
 
 A JSON import types those fields as plain strings; the validation is what narrows them to the exact values the components rely on. `getProjects()` returns the projects newest first by `year`, keeping the file's order within a year.
 
-### Placeholder content
+### Content
 
-Six lorem ipsum projects covering every type and status, with years from 2019 to 2026:
-- two `web`, each with the screenshot placeholder, a URL and links;
-- two `cli` and two `lib`, each with a terminal session using all four tones;
-- at least one project missing `source` or `writeup`, so a hidden link shows.
+Koen's seven projects, agreed one by one:
 
-The screenshot placeholder is `public/projects/placeholder.svg`: a neutral 16:10 image that reads "screenshot", in the site's greys.
+| Name | Type | Year | Status | Preview |
+|---|---|---|---|---|
+| CrossVision | `ml` | 2026 | live | screenshot of its prediction page, browser frame |
+| Froopyland | `cli` | 2026 | live | screenshot of the app, terminal frame |
+| zsh-venv-auto-switch | `zsh` | 2026 | live | terminal session |
+| Fartt | `ml` | 2024 | wip | Claude Code session, condensed from a real one |
+| Sports Direct | `web` | 2024 | live | screenshot of the homepage |
+| zsh-git-alias | `zsh` | 2023 | live | terminal session |
+| LeasePlan | `web` | 2021 | live | screenshot of the Ayvens business showroom |
+
+Screenshots are 16:10 in `public/projects/`, cropped from the live sites and, for Froopyland, from its repository's screenshot.
 
 ## Units
 
@@ -127,12 +137,12 @@ Client component. It renders an Accordion with one item per project, inside a `T
 
 **Panel**
 - The Accordion content, under its row in the same item, with about 8px of padding above and 32px below. A 1px `accent` border closes it at the bottom, easing the step back into the rows; it's the table's only border.
-- The preview at full width: `BrowserFrame` for `web` with an image, `TerminalFrame` for `cli` and `lib` with a terminal session, and nothing when a project has neither.
+- The preview at full width: a screenshot in `BrowserFrame`, or in `TerminalFrame` when `preview.frame` is `terminal`; otherwise a terminal session in `TerminalFrame`; and nothing when a project has neither.
 - `ProjectDetails` beneath it.
 
 ### `components/project-status.tsx`
 
-A `●` dot, `info` for `live`, `warning` for `wip` and `muted-foreground` for `archived`.
+A `●` dot, `success` (green) for `live`, `danger` (red) for `wip` and `muted-foreground` (grey) for `archived`.
 - Hovering the dot shows the status ("live", "wip" or "archived") in a tooltip (`ui/tooltip.tsx`, Radix), in the `primary` colors (black in light, white in dark, like the current page's button), so it stands out from the hovered row: mono, uppercase, `text-xs`.
 - The label is also in the DOM as visually hidden text, so screen readers read it as part of the row, and color is never the only signal.
 - Touch screens have no hover, so on phones the status is the dot's color only.
@@ -150,8 +160,12 @@ type BrowserFrameProps = { url?: string; image: string; alt: string }
 ### `components/terminal-frame.tsx`
 
 ```tsx
-type TerminalFrameProps = { name: string; lines: { text: string; tone: Tone }[] }
+type TerminalFrameProps =
+  | { name: string; lines: { text: string; tone: Tone }[] }
+  | { name: string; image: string; alt: string }
 ```
+
+With `image`, the body is the screenshot (16:10, `object-cover`) instead of the lines and prompt.
 
 - **Theme:** the `dark` class, so tokens inside take their dark values in both themes. The background is `secondary`, the text `foreground`.
 - **Look:** 13px mono, a 6px radius, a minimum height of about 220px.
@@ -170,7 +184,7 @@ Beneath the preview:
 - beneath it, two columns of `<dl>` pairs in Lausanne regular at `text-sm`, which stack when narrow; labels in `muted-foreground`:
   - **left:** `stack` (joined with ` · `), `role` and `year`;
   - **right:** the links, each as a label and its address without the protocol, opened as the footer opens links (`getLinkTargetProps`):
-    - the primary link: "visit site" for `web`, "install" for `cli`, "npm" for `lib`;
+    - the primary link: "visit site" for `web`, "install" for `cli` and `zsh`, "npm" for `lib`, "results" for `ml`;
     - "source";
     - "write-up", a link to an article about the project;
     - each left out when it has no URL, and the column left out without any links.
@@ -197,9 +211,10 @@ Three new tokens in `src/app/globals.css`, each with a light and a dark value fr
 
 | Token | Light (`github-light`) | Dark (`github-dark`) | Used for |
 |---|---|---|---|
-| `info` | `#005cc5` (6.3:1 on white) | `#79b8ff` (10.1:1 on black) | `live` dot, focus outline |
-| `warning` | `#e36209` (3.5:1) | `#ffab70` (11.3:1) | `wip` dot, terminal warnings |
-| `success` | `#22863a` (4.6:1) | `#85e89d` (14:1) | terminal success lines |
+| `info` | `#005cc5` (6.3:1 on white) | `#79b8ff` (10.1:1 on black) | focus outline |
+| `warning` | `#e36209` (3.5:1) | `#ffab70` (11.3:1) | terminal warnings |
+| `success` | `#22863a` (4.6:1) | `#85e89d` (14:1) | `live` dot, terminal success lines |
+| `danger` | `#d73a49` (4.6:1) | `#f97583` (7.9:1) | `wip` dot |
 
 The light `warning` is used only for the dot, a graphic that needs 3:1. Terminal text always uses the dark values. `src/stories/tokens.ts` lists the new tokens, which the Colors page and its sync test require.
 
