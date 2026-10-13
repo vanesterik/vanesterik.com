@@ -27,7 +27,8 @@ function TooltipTrigger(
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
 }
 
-// Styled like the dropdown items, without an arrow or animation
+// In the primary colors (black in light, white in dark), so it stands out
+// from the hovered row behind it; no arrow or animation
 function TooltipContent({
   className,
   sideOffset = 4,
@@ -39,7 +40,7 @@ function TooltipContent({
         data-slot="tooltip-content"
         sideOffset={sideOffset}
         className={cn(
-          'z-50 rounded bg-secondary px-2 font-mono text-secondary-foreground text-xs uppercase leading-8',
+          'z-50 rounded bg-primary px-2 font-mono text-primary-foreground text-xs uppercase leading-8',
           className,
         )}
         {...props}

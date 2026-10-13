@@ -133,7 +133,7 @@ Client component. It renders an Accordion with one item per project, inside a `T
 ### `components/project-status.tsx`
 
 A `●` dot, `info` for `live`, `warning` for `wip` and `muted-foreground` for `archived`.
-- Hovering the dot shows the status ("live", "wip" or "archived") in a tooltip (`ui/tooltip.tsx`, Radix), styled like the dropdown items: mono, uppercase, `text-xs`, on `secondary`.
+- Hovering the dot shows the status ("live", "wip" or "archived") in a tooltip (`ui/tooltip.tsx`, Radix), in the `primary` colors (black in light, white in dark, like the current page's button), so it stands out from the hovered row: mono, uppercase, `text-xs`.
 - The label is also in the DOM as visually hidden text, so screen readers read it as part of the row, and color is never the only signal.
 - Touch screens have no hover, so on phones the status is the dot's color only.
 
@@ -177,7 +177,7 @@ Beneath the preview:
 
 ### `components/ui/tooltip.tsx`
 
-The shadcn/ui Tooltip (Radix), written by hand like the Accordion and restyled with the tokens: no arrow and no animation, mono uppercase `text-xs` on `secondary`, opening without a delay.
+The shadcn/ui Tooltip (Radix), written by hand like the Accordion and restyled with the tokens: no arrow and no animation, mono uppercase `text-xs` in `primary` and `primary-foreground`, opening without a delay.
 
 ### Footer
 
