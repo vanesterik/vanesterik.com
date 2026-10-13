@@ -4,7 +4,10 @@ import { getProjects } from '@/lib/projects'
 
 import { ProjectDetails } from './project-details'
 
-const [lorem] = getProjects()
+// A project with every kind of link, whichever it is
+const projects = getProjects()
+const project =
+  projects.find(({ links }) => links.primary && links.source) ?? projects[0]
 
 const meta = {
   component: ProjectDetails,
@@ -15,7 +18,7 @@ const meta = {
       </div>
     ),
   ],
-  args: { project: lorem },
+  args: { project: project },
 } satisfies Meta<typeof ProjectDetails>
 
 export default meta
@@ -25,5 +28,5 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {}
 
 export const WithoutLinks: Story = {
-  args: { project: { ...lorem, links: {} } },
+  args: { project: { ...project, links: {} } },
 }
