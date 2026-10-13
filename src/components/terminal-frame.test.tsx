@@ -61,8 +61,14 @@ describe('TerminalFrame', () => {
         alt="Screenshot of froopyland"
       />,
     )
-    // The screenshot already shows a terminal, so no padding or title
-    expect(container.firstChild).toHaveClass('overflow-hidden')
+    // The screenshot already shows a terminal, so no padding or title; the
+    // browser frame's border, in the page's own theme
+    expect(container.firstChild).toHaveClass(
+      'overflow-hidden',
+      'border',
+      'border-accent',
+    )
     expect(container.firstChild).not.toHaveClass('p-4')
+    expect(container.firstChild).not.toHaveClass('dark')
   })
 })

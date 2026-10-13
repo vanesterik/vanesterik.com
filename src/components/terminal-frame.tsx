@@ -18,17 +18,21 @@ type TerminalFrameProps = { name: string } & (
 
 /**
  * A terminal window showing what a tool does: a scripted session under a
- * "zsh — <name>" title, or a screenshot of a terminal app on its own. The dark class gives everything inside the
- * dark theme's tokens, so it stays dark and its colors stay readable in the
- * light theme too
+ * "zsh — <name>" title, or a screenshot of a terminal app on its own, in the
+ * browser frame's border. A session has the dark class, which gives
+ * everything inside the dark theme's tokens, so it stays dark and its colors
+ * stay readable in the light theme too
  */
 export const TerminalFrame = (props: TerminalFrameProps) => (
   <figure
     className={cn(
-      'dark flex flex-col rounded-md bg-secondary font-mono text-[13px] text-foreground leading-relaxed',
+      'flex flex-col rounded-md',
       // A screenshot already shows a terminal, so it runs to the edges
-      // without a title; a session gets a terminal's margin and title
-      'image' in props ? 'overflow-hidden' : 'min-h-55 gap-3 p-4',
+      // without a title, in the browser frame's border; a session gets a
+      // terminal's margin and title, in the dark theme's colors
+      'image' in props
+        ? 'overflow-hidden border border-accent'
+        : 'dark min-h-55 gap-3 bg-secondary p-4 font-mono text-[13px] text-foreground leading-relaxed',
     )}
   >
     {!('image' in props) && (

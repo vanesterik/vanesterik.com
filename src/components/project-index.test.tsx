@@ -106,8 +106,9 @@ describe('ProjectIndex', () => {
 
     await user.click(row(/^dolor/))
 
+    // Without the browser frame's address bar
     const image = screen.getByRole('img', { name: 'Screenshot of dolor' })
-    expect(image.closest('figure')).toHaveClass('dark')
+    expect(image.closest('figure')?.textContent).toBe('')
   })
 
   it('shows no preview for a project without one', async () => {
