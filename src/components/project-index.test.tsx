@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 
@@ -106,12 +106,8 @@ describe('ProjectIndex', () => {
 
     await user.click(row(/^dolor/))
 
-    const frame = screen
-      .getByText('zsh — dolor')
-      .closest('figure') as HTMLElement
-    expect(
-      within(frame).getByRole('img', { name: 'Screenshot of dolor' }),
-    ).toBeInTheDocument()
+    const image = screen.getByRole('img', { name: 'Screenshot of dolor' })
+    expect(image.closest('figure')).toHaveClass('dark')
   })
 
   it('shows no preview for a project without one', async () => {

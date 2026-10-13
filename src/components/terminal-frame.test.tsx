@@ -46,14 +46,14 @@ describe('TerminalFrame', () => {
         alt="Screenshot of froopyland"
       />,
     )
-    expect(screen.getByText('zsh — froopyland')).toBeInTheDocument()
+    expect(screen.queryByText('zsh — froopyland')).toBeNull()
     expect(
       screen.getByRole('img', { name: 'Screenshot of froopyland' }),
     ).toHaveAttribute('src', '/projects/froopyland.png')
     expect(container.querySelector('pre')).toBeNull()
   })
 
-  it('runs a screenshot to the edges, under a slim title bar', () => {
+  it('runs a screenshot to the edges, without a title', () => {
     const { container } = render(
       <TerminalFrame
         name="froopyland"
@@ -61,7 +61,7 @@ describe('TerminalFrame', () => {
         alt="Screenshot of froopyland"
       />,
     )
-    // Like the browser frame: no padding around the screenshot
+    // The screenshot already shows a terminal, so no padding or title
     expect(container.firstChild).toHaveClass('overflow-hidden')
     expect(container.firstChild).not.toHaveClass('p-4')
   })

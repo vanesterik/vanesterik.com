@@ -17,8 +17,8 @@ type TerminalFrameProps = { name: string } & (
 )
 
 /**
- * A terminal window showing what a tool does: a scripted session, or a
- * screenshot of a terminal app. The dark class gives everything inside the
+ * A terminal window showing what a tool does: a scripted session under a
+ * "zsh — <name>" title, or a screenshot of a terminal app on its own. The dark class gives everything inside the
  * dark theme's tokens, so it stays dark and its colors stay readable in the
  * light theme too
  */
@@ -26,19 +26,16 @@ export const TerminalFrame = (props: TerminalFrameProps) => (
   <figure
     className={cn(
       'dark flex flex-col rounded-md bg-secondary font-mono text-[13px] text-foreground leading-relaxed',
-      // A screenshot runs to the edges under a slim title bar, like the
-      // browser frame's; a session gets the room of a terminal's margin
+      // A screenshot already shows a terminal, so it runs to the edges
+      // without a title; a session gets a terminal's margin and title
       'image' in props ? 'overflow-hidden' : 'min-h-55 gap-3 p-4',
     )}
   >
-    <figcaption
-      className={cn(
-        'text-muted-foreground',
-        'image' in props && 'px-3 py-2 text-xs',
-      )}
-    >
-      zsh — {props.name}
-    </figcaption>
+    {!('image' in props) && (
+      <figcaption className="text-muted-foreground">
+        zsh — {props.name}
+      </figcaption>
+    )}
     {'image' in props ? (
       // biome-ignore lint/performance/noImgElement: the static export has no image optimizer, so next/image adds nothing
       <img

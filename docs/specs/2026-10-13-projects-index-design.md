@@ -165,7 +165,7 @@ type TerminalFrameProps =
   | { name: string; image: string; alt: string }
 ```
 
-With `image`, the body is the screenshot (16:10, `object-cover`) instead of the lines and prompt. Like the browser frame, it then has no padding: the screenshot runs to the edges under a slim title bar (`text-xs`), since a padded terminal around a screenshot of a terminal reads as a terminal inside a terminal.
+With `image`, the body is the screenshot (16:10, `object-cover`) instead of the lines and prompt. It then has no padding and no title: the screenshot already shows a terminal, so it runs to the frame's rounded edges on its own, instead of reading as a terminal inside a terminal.
 
 - **Theme:** the `dark` class, so tokens inside take their dark values in both themes. The background is `secondary`, the text `foreground`.
 - **Look:** 13px mono, a 6px radius, a minimum height of about 220px.
