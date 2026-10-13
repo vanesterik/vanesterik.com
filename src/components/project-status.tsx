@@ -9,8 +9,8 @@ import {
 import type { Status } from '@/lib/projects'
 
 const DOT_COLORS: Record<Status, string> = {
-  live: 'text-info',
-  wip: 'text-warning',
+  live: 'text-success',
+  wip: 'text-danger',
   archived: 'text-muted-foreground',
 }
 

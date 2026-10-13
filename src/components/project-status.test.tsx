@@ -6,8 +6,8 @@ import { ProjectStatus } from './project-status'
 
 describe('ProjectStatus', () => {
   it.each([
-    ['live', 'text-info'],
-    ['wip', 'text-warning'],
+    ['live', 'text-success'],
+    ['wip', 'text-danger'],
     ['archived', 'text-muted-foreground'],
   ] as const)('shows %s as a dot in its color', (status, color) => {
     render(<ProjectStatus status={status} />)
