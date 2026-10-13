@@ -106,6 +106,6 @@ Component tests are Vitest with Testing Library and user-event in jsdom (`vitest
 Two workflows. Actions are pinned by commit SHA with a version comment, which Dependabot updates.
 
 - **`ci.yml`** (push to `main`, pull requests, and called by `deploy.yml`): lint, typecheck, test, build. Storybook is built only when it's deployed. A newer push cancels an older run on the same pull request.
-- **`deploy.yml`** (tag `v*.*.*`): runs `ci.yml`, then in parallel syncs `out/` to the production S3 bucket (access-key secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `AWS_S3_BUCKET_NAME`) and publishes Storybook to GitHub Pages at https://vanesterik.github.io/vanesterik.dev/. Deploys are never cancelled midway.
+- **`deploy.yml`** (tag `v*.*.*`): runs `ci.yml`, then in parallel syncs `out/` to the production S3 bucket (access-key secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `AWS_S3_BUCKET_NAME`) and publishes Storybook to GitHub Pages at https://vanesterik.github.io/vanesterik.dev/. Storybook is built with `NEXT_PUBLIC_BASE_PATH=/vanesterik.dev`, because a plain `<img>` of a file in `public/` (such as `BrowserFrame`'s screenshot) needs that prefix there; Next's own links and assets add the base path by themselves. Deploys are never cancelled midway.
 
 Pushing a release tag (see "Releasing" above) is the only way to deploy. GitHub Pages must use the source "GitHub Actions", and its `github-pages` environment must allow `v*.*.*` tags.
