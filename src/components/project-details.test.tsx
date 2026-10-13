@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
 import type { Project } from '@/lib/projects'
@@ -22,47 +22,72 @@ const project: Project = {
   },
 }
 
-const linkNames = () =>
-  screen.queryAllByRole('link').map((link) => link.textContent)
+// The label and value of every pair in a definition list, in order
+const pairs = (list: HTMLElement) =>
+  [...list.querySelectorAll('dt')].map((term) => [
+    term.textContent,
+    term.nextElementSibling?.textContent,
+  ])
 
 describe('ProjectDetails', () => {
-  it('shows the description, stack, role and year', () => {
+  it('shows the description in the prose style', () => {
     render(<ProjectDetails project={project} />)
-    expect(screen.getByText('Lorem ipsum dolor sit amet.')).toBeInTheDocument()
-    expect(screen.getByText('next.js · mdx')).toBeInTheDocument()
-    expect(screen.getByText('design + build')).toBeInTheDocument()
-    expect(screen.getByText('2026')).toBeInTheDocument()
+    expect(
+      screen.getByText('Lorem ipsum dolor sit amet.').closest('.prose'),
+    ).not.toBeNull()
+  })
+
+  it('lists the stack, role and year', () => {
+    render(<ProjectDetails project={project} />)
+    const [facts] = screen
+      .getAllByRole('definition')
+      .map((value) => value.closest('dl') as HTMLElement)
+    expect(pairs(facts)).toEqual([
+      ['stack', 'next.js · mdx'],
+      ['role', 'design + build'],
+      ['year', '2026'],
+    ])
   })
 
   it.each([
-    ['web', '→ visit site'],
-    ['cli', '→ install'],
-    ['lib', '→ npm'],
-  ] as const)('labels the primary link of a %s project', (type, label) => {
-    render(<ProjectDetails project={{ ...project, type }} />)
-    expect(linkNames()).toEqual([label, '→ source', '→ write-up'])
+    ['web', 'visit site'],
+    ['cli', 'install'],
+    ['lib', 'npm'],
+  ] as const)('lists the links of a %s project, by address', (type, label) => {
+    const { container } = render(
+      <ProjectDetails project={{ ...project, type }} />,
+    )
+    const links = container.querySelectorAll('dl')[1] as HTMLElement
+    expect(pairs(links)).toEqual([
+      [label, 'lorem.example.com'],
+      ['source', 'example.com/lorem'],
+      ['write-up', 'example.com/lorem/write-up'],
+    ])
   })
 
   it('opens the links in a new tab', () => {
     render(<ProjectDetails project={project} />)
-    expect(screen.getByRole('link', { name: 'visit site' })).toHaveAttribute(
-      'target',
-      '_blank',
-    )
+    expect(
+      screen.getByRole('link', { name: 'lorem.example.com' }),
+    ).toHaveAttribute('target', '_blank')
   })
 
   it('leaves out links without a URL', () => {
-    render(
+    const { container } = render(
       <ProjectDetails
         project={{ ...project, links: { source: 'https://example.com' } }}
       />,
     )
-    expect(linkNames()).toEqual(['→ source'])
+    expect(pairs(container.querySelectorAll('dl')[1] as HTMLElement)).toEqual([
+      ['source', 'example.com'],
+    ])
   })
 
-  it('renders no link list without links', () => {
-    render(<ProjectDetails project={{ ...project, links: {} }} />)
-    expect(screen.queryByRole('list')).toBeNull()
-    expect(within(document.body).queryAllByRole('link')).toHaveLength(0)
+  it('leaves out the links column without links', () => {
+    const { container } = render(
+      <ProjectDetails project={{ ...project, links: {} }} />,
+    )
+    expect(container.querySelectorAll('dl')).toHaveLength(1)
+    expect(screen.queryAllByRole('link')).toHaveLength(0)
   })
 })
