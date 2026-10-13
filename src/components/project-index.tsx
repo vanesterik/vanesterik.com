@@ -63,7 +63,8 @@ export const ProjectIndex = ({ projects }: ProjectIndexProps) => (
               <ProjectStatus status={project.status} />
             </span>
           </AccordionTrigger>
-          <AccordionContent className="flex flex-col gap-8 pt-2 pb-8">
+          {/* A hairline under an open panel eases the step back into the rows */}
+          <AccordionContent className="flex flex-col gap-8 border-accent border-b pt-2 pb-8">
             <ProjectPreview project={project} />
             <ProjectDetails project={project} />
           </AccordionContent>
