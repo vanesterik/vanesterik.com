@@ -42,7 +42,9 @@ describe('ProjectIndex', () => {
     expect(
       screen.getByRole('img', { name: 'Screenshot of lorem' }),
     ).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'visit site' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: 'lorem.example.com' }),
+    ).toBeInTheDocument()
   })
 
   it('keeps one row open at a time, and closes an open row on a click', async () => {

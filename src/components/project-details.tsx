@@ -1,3 +1,5 @@
+import { Fragment } from 'react'
+
 import { getLinkTargetProps } from '@/components/link-list'
 import type { Project, ProjectType } from '@/lib/projects'
 
@@ -7,13 +9,19 @@ const PRIMARY_LABELS: Record<ProjectType, string> = {
   lib: 'npm',
 }
 
+// Label column and spacing shared by both lists
+const LIST = 'grid grid-cols-[6rem_1fr] content-start gap-x-4 gap-y-1'
+
+const withoutProtocol = (url: string) => url.replace(/^https?:\/\//, '')
+
 type ProjectDetailsProps = {
   project: Project
 }
 
 /**
- * A project's description, facts and links, in columns that stack when
- * narrow. Stack and year are here too, as narrow tables hide their columns
+ * A project's description in the prose style, with two columns of definition
+ * pairs beneath it: its facts, and its links by address. The columns stack on
+ * narrow screens
  */
 export const ProjectDetails = ({ project }: ProjectDetailsProps) => {
   const { type, description, stack, role, year, links } = project
@@ -24,32 +32,38 @@ export const ProjectDetails = ({ project }: ProjectDetailsProps) => {
   ].filter((item): item is { label: string; url: string } => Boolean(item.url))
 
   return (
-    <div className="flex flex-wrap gap-8">
-      <p className="flex-[2_1_16rem]">{description}</p>
-      <dl className="grid flex-[1_1_12rem] grid-cols-[72px_1fr] content-start gap-x-2">
-        <dt className="text-muted-foreground">stack</dt>
-        <dd>{stack.join(' · ')}</dd>
-        <dt className="text-muted-foreground">role</dt>
-        <dd>{role}</dd>
-        <dt className="text-muted-foreground">year</dt>
-        <dd>{year}</dd>
-      </dl>
-      {items.length > 0 && (
-        <ul className="flex flex-[1_1_10rem] flex-wrap content-start gap-x-4">
-          {items.map(({ label, url }) => (
-            <li key={label}>
-              <a
-                className="hover:text-highlight"
-                href={url}
-                {...getLinkTargetProps(url)}
-              >
-                <span aria-hidden="true">→ </span>
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="flex flex-col gap-6">
+      <div className="prose max-w-none font-sans">
+        <p>{description}</p>
+      </div>
+      <div className="grid gap-6 font-mono text-xs uppercase sm:grid-cols-2">
+        <dl className={LIST}>
+          <dt className="text-muted-foreground">stack</dt>
+          <dd>{stack.join(' · ')}</dd>
+          <dt className="text-muted-foreground">role</dt>
+          <dd>{role}</dd>
+          <dt className="text-muted-foreground">year</dt>
+          <dd>{year}</dd>
+        </dl>
+        {items.length > 0 && (
+          <dl className={LIST}>
+            {items.map(({ label, url }) => (
+              <Fragment key={label}>
+                <dt className="text-muted-foreground">{label}</dt>
+                <dd className="truncate">
+                  <a
+                    className="hover:text-highlight"
+                    href={url}
+                    {...getLinkTargetProps(url)}
+                  >
+                    {withoutProtocol(url)}
+                  </a>
+                </dd>
+              </Fragment>
+            ))}
+          </dl>
+        )}
+      </div>
     </div>
   )
 }
