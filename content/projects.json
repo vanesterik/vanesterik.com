@@ -98,7 +98,7 @@
     "year": 2023,
     "status": "live",
     "role": "author",
-    "description": "Oh My Zsh's 178 git aliases and 17 functions, carried over into a lightweight plugin of their own.",
+    "description": "Oh My Zsh's 182 git aliases and 17 functions, carried over into a lightweight plugin of their own.",
     "preview": {
       "terminal": [
         { "text": "gcb feat/projects-page", "tone": "command" },
