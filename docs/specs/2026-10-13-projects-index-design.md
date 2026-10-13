@@ -36,7 +36,7 @@ The brief asks to follow the site's own stack, fonts, colors and layout wherever
 | Row text | 15px mono, lowercase | `text-xs` mono, uppercase, like the header and footer |
 | Column order | type · name · stack · year · status | name · type · year · status dot |
 | Status | A dot plus its label | The dot only, with the label in a tooltip on hover (and for screen readers) |
-| Expanded panel | Preview and details side by side | The preview at full width; the description beneath it at full width in the `prose` style; then two columns of `<dl>` pairs |
+| Expanded panel | Preview and details side by side | The preview at full width; the description beneath it at full width as a bold lead (`text-2xl`); then two columns of `<dl>` pairs |
 | Status and terminal colors | Hex values from the mockup | New tokens with GitHub light and dark values, from the Shiki themes the code blocks already use |
 | Links | Accent blue | The site's link style: the text color, `highlight` on hover |
 | Terminal background | `#141414` in both themes | The `secondary` token of the dark theme in both themes, through a `dark` class on the frame |
@@ -52,7 +52,7 @@ The brief asks to follow the site's own stack, fonts, colors and layout wherever
 | Order | Newest first by `year`, then in file order |
 | Expanding rows | shadcn/ui Accordion (Radix), `type="single"` and `collapsible`: one row open at a time, an open row closes when clicked |
 | Rendering | The index is a client component (the Accordion). The frames, status and details render on the server or the client alike |
-| Type | Rows in NB International Pro Mono, `text-xs`, uppercase; the description in the `prose` style (Lausanne); detail labels in `muted-foreground` |
+| Type | Rows in NB International Pro Mono, `text-xs`, uppercase; the description as a bold Lausanne lead; detail labels in `muted-foreground` |
 | Colors | Tokens only. New: `info` (blue), `warning` (orange), `success` (green) |
 | Images | Plain `<img>`, lazy-loaded, as the static export has no image optimizer |
 | Current page | `NavLink`, a client component using `usePathname`, ignoring the trailing slash |
@@ -166,8 +166,8 @@ type TerminalFrameProps = { name: string; lines: { text: string; tone: Tone }[] 
 ### `components/project-details.tsx`
 
 Beneath the preview:
-- the description at full width, in the `prose` style the posts use;
-- beneath it, two columns of `<dl>` pairs in Lausanne regular at `text-sm`, one size below the description, which stack when narrow; labels in `muted-foreground`:
+- the description at full width as a bold lead: Lausanne bold at `text-2xl`, the size of the post titles. It's the one large, heavy line in the panel, a brutalist break from the small rows and summaries, so descriptions should stay short (about 15 words);
+- beneath it, two columns of `<dl>` pairs in Lausanne regular at `text-sm`, which stack when narrow; labels in `muted-foreground`:
   - **left:** `stack` (joined with ` · `), `role` and `year`;
   - **right:** the links, each as a label and its address without the protocol, opened as the footer opens links (`getLinkTargetProps`):
     - the primary link: "visit site" for `web`, "install" for `cli`, "npm" for `lib`;
