@@ -86,7 +86,7 @@
     "status": "live",
     "role": "front-end team lead",
     "description": "A headless storefront for one of the UK's largest sports retailers, built on commercetools and Amplience.",
-    "url": "https://www.sportsdirect.com/",
+    "url": "https://ie.sportsdirect.com/mens/footwear/trainers",
     "preview": { "image": "/projects/sportsdirect.jpg" },
     "links": { "primary": "https://www.sportsdirect.com/" }
   },
