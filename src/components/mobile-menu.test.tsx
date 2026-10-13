@@ -38,6 +38,20 @@ describe('MobileMenu', () => {
     )
   })
 
+  it('keeps the current item readable on hover and focus', async () => {
+    pathname.value = '/about/'
+    const user = userEvent.setup()
+    render(<MobileMenu items={items} />)
+
+    await user.click(screen.getByRole('button', { name: 'menu' }))
+
+    // The primary background must stay under the primary-foreground text
+    const current = screen.getByRole('menuitem', { name: 'about' })
+    expect(current).toHaveClass('hover:bg-primary/80', 'focus:bg-primary/80')
+    expect(current).not.toHaveClass('hover:bg-accent')
+    expect(current).not.toHaveClass('focus:bg-accent')
+  })
+
   it('opens a menu that links to every page but home', async () => {
     const user = userEvent.setup()
     render(<MobileMenu items={items} />)

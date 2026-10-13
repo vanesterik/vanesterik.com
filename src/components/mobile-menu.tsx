@@ -47,7 +47,7 @@ export const MobileMenu = ({ items }: MobileMenuProps) => {
             asChild
             className={
               isCurrentPath(pathname, url)
-                ? 'bg-primary text-primary-foreground'
+                ? 'bg-primary text-primary-foreground hover:bg-primary/80 focus:bg-primary/80'
                 : undefined
             }
           >
