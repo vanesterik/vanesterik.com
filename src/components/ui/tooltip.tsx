@@ -28,10 +28,12 @@ function TooltipTrigger(
 }
 
 // In the primary colors (black in light, white in dark), so it stands out
-// from the hovered row behind it; no arrow or animation
+// from the hovered row behind it, with a caret pointing at its trigger; no
+// animation
 function TooltipContent({
   className,
   sideOffset = 4,
+  children,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Content>) {
   return (
@@ -44,7 +46,14 @@ function TooltipContent({
           className,
         )}
         {...props}
-      />
+      >
+        {children}
+        <TooltipPrimitive.Arrow
+          width={10}
+          height={5}
+          className="fill-primary"
+        />
+      </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   )
 }
