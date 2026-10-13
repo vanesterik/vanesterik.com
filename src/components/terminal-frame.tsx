@@ -23,8 +23,20 @@ type TerminalFrameProps = { name: string } & (
  * light theme too
  */
 export const TerminalFrame = (props: TerminalFrameProps) => (
-  <figure className="dark flex min-h-55 flex-col gap-3 rounded-md bg-secondary p-4 font-mono text-[13px] text-foreground leading-relaxed">
-    <figcaption className="text-muted-foreground">
+  <figure
+    className={cn(
+      'dark flex flex-col rounded-md bg-secondary font-mono text-[13px] text-foreground leading-relaxed',
+      // A screenshot runs to the edges under a slim title bar, like the
+      // browser frame's; a session gets the room of a terminal's margin
+      'image' in props ? 'overflow-hidden' : 'min-h-55 gap-3 p-4',
+    )}
+  >
+    <figcaption
+      className={cn(
+        'text-muted-foreground',
+        'image' in props && 'px-3 py-2 text-xs',
+      )}
+    >
       zsh — {props.name}
     </figcaption>
     {'image' in props ? (
@@ -33,7 +45,7 @@ export const TerminalFrame = (props: TerminalFrameProps) => (
         src={withBasePath(props.image)}
         alt={props.alt}
         loading="lazy"
-        className="aspect-[16/10] w-full rounded-sm object-cover"
+        className="aspect-[16/10] w-full object-cover"
       />
     ) : (
       <pre className="whitespace-pre-wrap font-mono">
