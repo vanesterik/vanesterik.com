@@ -1,3 +1,11 @@
+'use client'
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import type { Status } from '@/lib/projects'
 
 const DOT_COLORS: Record<Status, string> = {
@@ -11,14 +19,21 @@ type ProjectStatusProps = {
 }
 
 /**
- * A project's status as a colored dot and its label; the label always shows,
- * so color is never the only signal
+ * A project's status as a colored dot, with its label in a tooltip on hover
+ * and in the text for screen readers, so color is never the only signal
  */
 export const ProjectStatus = ({ status }: ProjectStatusProps) => (
-  <span className="inline-flex items-baseline gap-1.5">
-    <span aria-hidden="true" className={DOT_COLORS[status]}>
-      ●
-    </span>
-    {status}
-  </span>
+  <TooltipProvider>
+    <Tooltip>
+      {/* A span, not Radix's default button: the dot sits inside a row's
+          button, which can't hold another */}
+      <TooltipTrigger asChild>
+        <span aria-hidden="true" className={DOT_COLORS[status]}>
+          ●
+        </span>
+      </TooltipTrigger>
+      <TooltipContent>{status}</TooltipContent>
+    </Tooltip>
+    <span className="sr-only">{status}</span>
+  </TooltipProvider>
 )
