@@ -1,6 +1,4 @@
-import Link from 'next/link'
-
-import { Button } from '@/components/ui/button'
+import { NavLink } from '@/components/nav-link'
 
 type NavigationItem = {
   name: string
@@ -20,9 +18,7 @@ export const Navigation = ({ items }: NavigationProps) => {
         {items.map(({ name, url }) => (
           // Below md, MobileMenu holds the pages besides home
           <li key={name} className={url === '/' ? undefined : 'max-md:hidden'}>
-            <Button asChild variant={url === '/' ? 'ghost' : 'secondary'}>
-              <Link href={url}>{name}</Link>
-            </Button>
+            <NavLink name={name} url={url} />
           </li>
         ))}
       </ul>

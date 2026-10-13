@@ -7,6 +7,7 @@ import { Navigation } from './navigation'
 const meta = {
   component: Navigation,
   args: { items: layout.menu },
+  parameters: { nextjs: { appDirectory: true } },
 } satisfies Meta<typeof Navigation>
 
 export default meta
@@ -19,5 +20,12 @@ export const Default: Story = {}
 export const OnPhone: Story = {
   globals: {
     viewport: { value: 'mobile1', isRotated: false },
+  },
+}
+
+// The current page shows in the primary style
+export const OnProjects: Story = {
+  parameters: {
+    nextjs: { navigation: { pathname: '/projects/' } },
   },
 }
