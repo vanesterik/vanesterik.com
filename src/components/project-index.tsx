@@ -51,8 +51,9 @@ export const ProjectIndex = ({ projects }: ProjectIndexProps) => (
           <AccordionTrigger
             className={cn(
               COLUMNS,
-              // The header and footer's text style
-              'min-h-11 items-baseline py-3.5 text-xs uppercase hover:bg-secondary',
+              // The header and footer's text style, rounded and padded like
+              // their buttons
+              'min-h-11 items-baseline rounded px-2 py-3.5 text-xs uppercase hover:bg-secondary',
             )}
           >
             <span>{project.name}</span>

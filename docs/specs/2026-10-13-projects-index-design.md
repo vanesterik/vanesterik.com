@@ -115,7 +115,7 @@ Client component. It renders an Accordion with one item per project, inside a `T
 
 **Rows**
 - The trigger is a full-width `<button>` with `aria-expanded` and `aria-controls` (from Radix), at least 44px tall, with its cells baseline-aligned.
-- Text: NB International Pro Mono, `text-xs`, uppercase, as in the header and footer.
+- Text: NB International Pro Mono, `text-xs`, uppercase, as in the header and footer. Rounded (`rounded`) and padded (`px-2`) like the header's buttons, so the hover background and focus outline sit around the text.
 - Cells, in a grid of `1fr 3rem 3rem 1rem` with a 16px gap:
   - `name`;
   - `type`, in `muted-foreground`;
