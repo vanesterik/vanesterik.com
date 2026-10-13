@@ -1,108 +1,139 @@
 [
   {
-    "slug": "lorem",
-    "type": "web",
-    "name": "lorem",
-    "stack": ["next.js", "mdx"],
+    "slug": "crossvision",
+    "type": "ml",
+    "name": "CrossVision",
+    "stack": ["python", "pytorch", "fastapi", "react"],
     "year": 2026,
     "status": "live",
-    "role": "design + build",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.",
-    "url": "https://lorem.example.com",
-    "preview": { "image": "/projects/placeholder.svg" },
-    "links": {
-      "primary": "https://lorem.example.com",
-      "source": "https://example.com/lorem",
-      "writeup": "https://example.com/lorem/write-up"
-    }
-  },
-  {
-    "slug": "ipsum",
-    "type": "cli",
-    "name": "ipsum",
-    "stack": ["bash", "tar"],
-    "year": 2026,
-    "status": "wip",
-    "role": "author",
-    "description": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.",
-    "preview": {
-      "terminal": [
-        { "text": "ipsum pack ./lorem", "tone": "command" },
-        { "text": "scanning 12,480 files …", "tone": "info" },
-        { "text": "skipped 316 dolor entries", "tone": "warn" },
-        { "text": "wrote lorem.tar.zst", "tone": "success" }
-      ]
-    },
-    "links": {
-      "primary": "https://example.com/ipsum/install",
-      "source": "https://example.com/ipsum"
-    }
-  },
-  {
-    "slug": "dolor",
-    "type": "lib",
-    "name": "dolor",
-    "stack": ["typescript"],
-    "year": 2025,
-    "status": "live",
-    "role": "maintainer",
-    "description": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-    "preview": {
-      "terminal": [
-        { "text": "npm install dolor", "tone": "command" },
-        { "text": "resolving 3 packages …", "tone": "info" },
-        { "text": "1 deprecated sit amet", "tone": "warn" },
-        { "text": "added dolor@2.1.0", "tone": "success" }
-      ]
-    },
-    "links": {
-      "primary": "https://example.com/dolor/npm",
-      "source": "https://example.com/dolor",
-      "writeup": "https://example.com/dolor/write-up"
-    }
-  },
-  {
-    "slug": "sit-amet",
-    "type": "web",
-    "name": "sit amet",
-    "stack": ["react", "redux", "sitecore"],
-    "year": 2023,
-    "status": "archived",
-    "role": "front-end lead",
-    "description": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim.",
-    "url": "https://sit-amet.example.com",
-    "preview": { "image": "/projects/placeholder.svg" },
-    "links": { "primary": "https://sit-amet.example.com" }
-  },
-  {
-    "slug": "consectetur",
-    "type": "cli",
-    "name": "consectetur",
-    "stack": ["python"],
-    "year": 2021,
-    "status": "archived",
-    "role": "author",
-    "description": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
-    "preview": {
-      "terminal": [
-        { "text": "consectetur --check ./data", "tone": "command" },
-        { "text": "reading 48 lorem files …", "tone": "info" },
-        { "text": "2 files without ipsum", "tone": "warn" },
-        { "text": "46 files ok", "tone": "success" }
-      ]
-    },
-    "links": { "source": "https://example.com/consectetur" }
-  },
-  {
-    "slug": "adipiscing",
-    "type": "lib",
-    "name": "adipiscing",
-    "stack": ["javascript", "canvas"],
-    "year": 2019,
-    "status": "wip",
-    "role": "author",
-    "description": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.",
-    "preview": {},
+    "role": "data scientist",
+    "description": "Self-supervised vision models, pretrained on Utrecht's aerial imagery, fine-tuned to detect tree canopy and solar panels.",
+    "preview": { "image": "/projects/crossvision.jpg" },
     "links": {}
+  },
+  {
+    "slug": "froopyland",
+    "type": "cli",
+    "name": "Froopyland",
+    "stack": ["go", "bubble tea", "lip gloss"],
+    "year": 2026,
+    "status": "live",
+    "role": "author",
+    "description": "A terminal app for finding a color's shades, highlights and alternatives, without leaving the terminal for a browser.",
+    "preview": { "image": "/projects/froopyland.png", "frame": "terminal" },
+    "links": {
+      "primary": "https://github.com/vanesterik/froopyland#installation",
+      "source": "https://github.com/vanesterik/froopyland"
+    }
+  },
+  {
+    "slug": "zsh-venv-auto-switch",
+    "type": "zsh",
+    "name": "zsh-venv-auto-switch",
+    "stack": ["zsh", "python", "zap"],
+    "year": 2026,
+    "status": "live",
+    "role": "author",
+    "description": "Activates a project's Python virtual environment when you cd into it, and deactivates it on leaving.",
+    "preview": {
+      "terminal": [
+        { "text": "cd ~/Projects/fartt", "tone": "command" },
+        { "text": "which python", "tone": "command" },
+        { "text": "~/Projects/fartt/.venv/bin/python", "tone": "success" },
+        { "text": "cd ~", "tone": "command" },
+        { "text": "which python", "tone": "command" },
+        { "text": "/usr/bin/python3", "tone": "info" }
+      ]
+    },
+    "links": {
+      "primary": "https://github.com/vanesterik/zsh-venv-auto-switch#installation",
+      "source": "https://github.com/vanesterik/zsh-venv-auto-switch"
+    }
+  },
+  {
+    "slug": "fartt",
+    "type": "ml",
+    "name": "Fartt",
+    "stack": ["python", "pytorch", "mcp", "ccxt"],
+    "year": 2024,
+    "status": "wip",
+    "role": "author",
+    "description": "An MCP server that gives an AI agent what it needs to trade bitcoin: candles, forecasts and risk controls.",
+    "preview": {
+      "terminal": [
+        { "text": "claude", "tone": "command" },
+        {
+          "text": "❯ what does the model expect for the next BTC/EUR candle?",
+          "tone": "info"
+        },
+        { "text": "  Called fartt 3 times", "tone": "info" },
+        {
+          "text": "expected return −0.067% · a round trip costs 0.70%",
+          "tone": "warn"
+        },
+        { "text": "hit rate 40.8% over the last 98 candles", "tone": "warn" },
+        { "text": "too small to trade on: hold", "tone": "success" }
+      ]
+    },
+    "links": { "source": "https://github.com/vanesterik/fartt" }
+  },
+  {
+    "slug": "sports-direct",
+    "type": "web",
+    "name": "Sports Direct",
+    "stack": ["commercetools", "amplience", "next.js", "typescript"],
+    "year": 2024,
+    "status": "live",
+    "role": "front-end team lead",
+    "description": "A headless storefront for one of the UK's largest sports retailers, built on commercetools and Amplience.",
+    "url": "https://www.sportsdirect.com/",
+    "preview": { "image": "/projects/sportsdirect.jpg" },
+    "links": { "primary": "https://www.sportsdirect.com/" }
+  },
+  {
+    "slug": "zsh-git-alias",
+    "type": "zsh",
+    "name": "zsh-git-alias",
+    "stack": ["zsh", "git", "zap"],
+    "year": 2023,
+    "status": "live",
+    "role": "author",
+    "description": "Oh My Zsh's 178 git aliases and 17 functions, carried over into a lightweight plugin of their own.",
+    "preview": {
+      "terminal": [
+        { "text": "gcb feat/projects-page", "tone": "command" },
+        {
+          "text": "Switched to a new branch 'feat/projects-page'",
+          "tone": "info"
+        },
+        {
+          "text": "gaa && gcmsg \"feat: add the projects page\"",
+          "tone": "command"
+        },
+        {
+          "text": "[feat/projects-page 5612e57] feat: add the projects page",
+          "tone": "success"
+        }
+      ]
+    },
+    "links": {
+      "primary": "https://github.com/vanesterik/zsh-git-alias#readme",
+      "source": "https://github.com/vanesterik/zsh-git-alias"
+    }
+  },
+  {
+    "slug": "leaseplan",
+    "type": "web",
+    "name": "LeasePlan",
+    "stack": ["react", "redux", "typescript", "sitecore jss"],
+    "year": 2021,
+    "status": "live",
+    "role": "senior frontend developer",
+    "description": "Lease showrooms and products rolled out across LeasePlan's countries on Sitecore JSS, still live as Ayvens.",
+    "url": "https://www.ayvens.com/nl-nl/zakelijk-leasen-showroom/",
+    "preview": { "image": "/projects/leaseplan.jpg" },
+    "links": {
+      "primary": "https://www.ayvens.com/nl-nl/zakelijk-leasen-showroom/"
+    }
   }
 ]

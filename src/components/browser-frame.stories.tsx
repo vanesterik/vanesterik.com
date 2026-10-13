@@ -12,9 +12,9 @@ const meta = {
     ),
   ],
   args: {
-    url: 'https://lorem.example.com',
-    image: '/projects/placeholder.svg',
-    alt: 'Screenshot of lorem',
+    url: 'https://www.sportsdirect.com/',
+    image: '/projects/sportsdirect.jpg',
+    alt: 'Screenshot of Sports Direct',
   },
 } satisfies Meta<typeof BrowserFrame>
 

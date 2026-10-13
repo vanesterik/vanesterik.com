@@ -4,8 +4,11 @@ import { getProjects } from '@/lib/projects'
 
 import { TerminalFrame } from './terminal-frame'
 
-// The first project with a terminal session, whichever it is
-const session = getProjects().find(({ preview }) => preview.terminal)
+// The first project with a terminal session, and the first with a terminal
+// app screenshot, whichever they are
+const projects = getProjects()
+const session = projects.find(({ preview }) => preview.terminal)
+const screenshot = projects.find(({ preview }) => preview.frame === 'terminal')
 
 // Typed without the component: its props are a union (lines or a
 // screenshot), which Storybook can't infer args from
@@ -30,6 +33,16 @@ export const Session: Story = {
     <TerminalFrame
       name={session?.name ?? 'session'}
       lines={session?.preview.terminal ?? []}
+    />
+  ),
+}
+
+export const Screenshot: Story = {
+  render: () => (
+    <TerminalFrame
+      name={screenshot?.name ?? 'screenshot'}
+      image={screenshot?.preview.image ?? ''}
+      alt={`Screenshot of ${screenshot?.name}`}
     />
   ),
 }
