@@ -126,8 +126,8 @@ export const game = (container: HTMLElement) => {
     particles: [],
   }
 
-  const stopResizing = resizeCanvas(state)
-  const stopDragging = dragParticles(state)
+  const stopResizing = observeCanvasSize(state)
+  const stopDragging = enableDragging(state)
   state.frameId = requestAnimationFrame(() => render(state))
 
   // Return a function that stops everything the game set up and removes its
@@ -141,12 +141,13 @@ export const game = (container: HTMLElement) => {
 }
 
 /**
- * Size the canvas to its CSS size times the device pixel ratio, scaled back so
- * drawing happens in CSS pixels, and match the number of particles to the
- * width. Particles that end up outside a canvas that shrank are brought back
- * in by the boundary detection.
+ * Watch the canvas's CSS size: whenever it changes, size the canvas to it
+ * times the device pixel ratio, scaled back so drawing happens in CSS pixels,
+ * and match the number of particles to the width. Particles that end up
+ * outside a canvas that shrank are brought back in by bounceParticlesOffWalls.
+ * Returns a function that stops watching.
  */
-const resizeCanvas = (state: State) => {
+const observeCanvasSize = (state: State) => {
   const { canvas, context } = state
 
   const observer = new ResizeObserver((entries) => {
@@ -162,7 +163,12 @@ const resizeCanvas = (state: State) => {
       state.width = width
       state.height = height
 
-      updateParticleCount(state, width, height)
+      state.particles = getParticlesForSize(
+        state.particles,
+        width,
+        height,
+        state.isReducedMotion,
+      )
     })
   })
   observer.observe(canvas)
@@ -171,20 +177,24 @@ const resizeCanvas = (state: State) => {
 }
 
 /**
- * Match the number of particles to the breakpoint of the canvas width. The
- * first size lays them out on a grid. Crossing a breakpoint later adds
- * particles in free spots or removes the newest ones, and leaves the others
- * where they are, so the animation carries on.
+ * Get the particles for the passed canvas size, with as many as the
+ * breakpoint of its width asks for. The first size lays them out on a grid.
+ * Crossing a breakpoint later adds particles in free spots or removes the
+ * newest ones, and keeps the others where they are, so the animation carries
+ * on.
  */
-const updateParticleCount = (state: State, width: number, height: number) => {
-  const { isReducedMotion, particles } = state
+const getParticlesForSize = (
+  particles: Particle[],
+  width: number,
+  height: number,
+  isReducedMotion: boolean,
+) => {
   const count = getParticleCount(width)
 
-  if (particles.length === count) return
+  if (particles.length === count) return particles
 
   if (particles.length === 0) {
-    state.particles = createParticleGrid(count, width, height, isReducedMotion)
-    return
+    return createParticleGrid(count, width, height, isReducedMotion)
   }
 
   // Particles are ordered by id, so the newest are removed first
@@ -197,7 +207,7 @@ const updateParticleCount = (state: State, width: number, height: number) => {
     added.push(createParticle(nextId + index, x, y, width, isReducedMotion))
   }
 
-  state.particles = [...kept, ...added]
+  return [...kept, ...added]
 }
 
 /**
@@ -276,9 +286,9 @@ const createParticle = (
  * Let the pointer grab a particle and drag it around. Grabbing a particle flips
  * its type, as a collision would. The cursor shows a grab hand over particles,
  * and a touch that lands on a particle doesn't scroll the page; one that misses
- * still does.
+ * still does. Returns a function that stops listening to the pointer.
  */
-const dragParticles = (state: State) => {
+const enableDragging = (state: State) => {
   const { canvas } = state
 
   const updateCursor = (x: number, y: number) => {
@@ -375,9 +385,9 @@ const render = (state: State) => {
   state.lastFrameAt = time
 
   updateParticlePositions(state, steps)
-  detectParticleBoundaries(state)
-  detectParticleCollisions(state)
-  detectHeldParticleBuffer(state)
+  bounceParticlesOffWalls(state)
+  collideParticles(state)
+  keepParticlesOutOfBuffer(state)
 
   clearCanvas(state)
   drawBuffer(state)
@@ -430,16 +440,11 @@ const updateParticlePositions = (
 }
 
 /**
- * Detect boundary collision and update particle velocity and position. A
+ * Bounce particles that reach an edge of the canvas back inside it. A
  * particle always bounces towards the inside, so one left outside a canvas
  * that shrank, or resting on an edge, doesn't keep reversing.
  */
-const detectParticleBoundaries = ({
-  drag,
-  height,
-  particles,
-  width,
-}: State) => {
+const bounceParticlesOffWalls = ({ drag, height, particles, width }: State) => {
   particles.forEach((particle) => {
     // The pointer keeps a held particle inside the canvas
     if (particle === drag?.particle) return
@@ -464,11 +469,11 @@ const detectParticleBoundaries = ({
 }
 
 /**
- * Detect collision between two particles and update particle velocities. Each
+ * Bounce particles that touch off each other and swap their types. Each
  * collision sees the velocities left by the ones before it in the same frame.
- * The particle held by the pointer is left to detectHeldParticleBuffer.
+ * The particle held by the pointer is left to keepParticlesOutOfBuffer.
  */
-const detectParticleCollisions = ({ drag, particles }: State) => {
+const collideParticles = ({ drag, particles }: State) => {
   particles.forEach((particleA, indexA) => {
     if (particleA === drag?.particle) return
 
@@ -526,7 +531,7 @@ const detectParticleCollisions = ({ drag, particles }: State) => {
  * one inside it is pushed back to its edge, so a fast drag can't leave it
  * stuck. Neither changes type.
  */
-const detectHeldParticleBuffer = ({ drag, particles }: State) => {
+const keepParticlesOutOfBuffer = ({ drag, particles }: State) => {
   if (!drag) return
 
   const held = drag.particle
